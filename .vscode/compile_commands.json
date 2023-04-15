@@ -1,0 +1,6 @@
+[
+{
+  "directory": "/home/tao/projects/xmake_projects/rvld",
+  "arguments": ["/usr/local/bin/clang", "-c", "-Qunused-arguments", "-m64", "-g", "-O0", "-std=c++2b", "-I", "/home/tao/.xmake/packages/g/gtest/1.12.1/77b9096bc4b34d9282f672d36b015ba9/include", "-I", "/home/tao/.xmake/packages/g/glog/v0.6.0/98bb9424878c424382eb29e8237853f9/include", "-I", "/home/tao/.xmake/packages/g/gflags/v2.2.2/0f545414272c459b907061d5e923ed20/include", "-o", "build/.objs/rvld/linux/x86_64/debug/src/main.cpp.o", "src/main.cpp"],
+  "file": "src/main.cpp"
+}]
