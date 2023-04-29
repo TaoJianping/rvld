@@ -1,23 +1,43 @@
-#include <glog/logging.h>
+#include <cstdlib>
+#include <format>
+#include "rvld.h"
+#include <span>
+#include <concepts>
 
-int main(int argc, char** argv) 
+int main(int argc, char** argv)
 {
-  // 初始化 glog 库
-  google::InitGoogleLogging(argv[0]);
+    fs::path filePath = "/home/tao/projects/xmake_projects/rvld/tests/out/tests/hello/a.o";
 
-  // 设置日志输出目录
-  google::SetLogDestination(google::GLOG_INFO, "./log");
+    Linker linker{};
 
-  // 设置日志输出最小级别为 INFO
-  google::SetStderrLogging(google::GLOG_INFO);
+    auto inputFile = linker.NewInputFile(filePath);
+    if (!inputFile)
+    {
+        LOG(ERROR) << "Create File Failed";
+        return 1;
+    }
+    if (!inputFile->IsElfFile())
+    {
+        LOG(ERROR) << "THIS IS NOT ELF FILE";
+        return 1;
+    }
+    auto objFile = linker.NewObjectFile(inputFile);
+    objFile->Parse();
+    auto ehdr = objFile->ReadELFHeader();
+    auto shdrs = objFile->ReadSectionHeaders();
+    auto shstrsectContent = objFile->ReadSectionContent(ehdr.e_shstrndx);
 
-  // 记录日志
-  LOG(INFO) << "This is an informational message.";
-  LOG(WARNING) << "This is a warning message.";
-  LOG(ERROR) << "This is an error message.";
+    auto symbols = objFile->ReadSymbolTable();
+    auto stringTable = objFile->ReadStringTable();
 
-  // 关闭 glog 库
-  google::ShutdownGoogleLogging();
+    for (auto &s : symbols)
+    {
+        LOG(INFO) << objFile->ReadSymbolName(s);
+    }
 
-  return 0;
+
+    delete inputFile;
+    delete objFile;
+
+    return 0;
 }

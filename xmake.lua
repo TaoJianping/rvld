@@ -1,13 +1,12 @@
 add_rules("mode.debug", "mode.release")
 
-add_requires("gtest", "glog")
+add_requires("glog")
 
 target("rvld")
     set_languages("cxxlatest")
     set_kind("binary")
     add_files("src/*.cpp") 
-    set_toolchains("clang")
-    add_packages("gtest", "glog")
+    add_packages("glog")
 
 --
 -- If you want to known more usage about xmake, please see https://xmake.io
