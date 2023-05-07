@@ -5,18 +5,19 @@
 # project
 cmake_minimum_required(VERSION 3.15.0)
 cmake_policy(SET CMP0091 NEW)
-set(CMAKE_CXX_STANDARD 23)
 project(rvld LANGUAGES CXX C)
 
-## target
-#set(CMAKE_C_COMPILER "/usr/local/bin/clang")
-#set(CMAKE_CXX_COMPILER "/usr/local/bin/clang++")
+# target
 add_executable(rvld "")
 set_target_properties(rvld PROPERTIES OUTPUT_NAME "rvld")
 set_target_properties(rvld PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/linux/x86_64/debug")
 target_include_directories(rvld PRIVATE
     /home/tao/.xmake/packages/g/glog/v0.6.0/98bb9424878c424382eb29e8237853f9/include
     /home/tao/.xmake/packages/g/gflags/v2.2.2/0f545414272c459b907061d5e923ed20/include
+    /home/tao/.xmake/packages/b/boost/1.81.0/f03df4012c1a40359a765b7f798be77d/include
+    /home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include
+    /home/tao/.xmake/packages/z/zlib/v1.2.13/6c2566e3272548ea9aa218b4a6537908/include
+    /home/tao/.xmake/packages/m/microsoft-gsl/v4.0.0/b588884cb8064346b12df545cbf8e0e7/include
 )
 target_compile_options(rvld PRIVATE
     $<$<COMPILE_LANGUAGE:C>:-m64>
@@ -39,11 +40,20 @@ endif()
 target_link_libraries(rvld PRIVATE
     glog
     gflags
+    boost_atomic-mt
+    boost_program_options-mt
+    boost_filesystem-mt
+    bz2
+    z
     pthread
+    dl
 )
 target_link_directories(rvld PRIVATE
     /home/tao/.xmake/packages/g/glog/v0.6.0/98bb9424878c424382eb29e8237853f9/lib
     /home/tao/.xmake/packages/g/gflags/v2.2.2/0f545414272c459b907061d5e923ed20/lib
+    /home/tao/.xmake/packages/b/boost/1.81.0/f03df4012c1a40359a765b7f798be77d/lib
+    /home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/lib
+    /home/tao/.xmake/packages/z/zlib/v1.2.13/6c2566e3272548ea9aa218b4a6537908/lib
 )
 target_link_options(rvld PRIVATE
     -m64
@@ -51,8 +61,87 @@ target_link_options(rvld PRIVATE
 target_sources(rvld PRIVATE
     src/ObjectFile.cpp
     src/InputFile.cpp
+    src/Archive.cpp
+    src/Context.cpp
     src/main.cpp
     src/ELFFile.cpp
     src/rvld.cpp
+    src/Utils/BytesReader.cpp
+    src/Utils/Bytes.cpp
+)
+
+# target
+add_executable(test_main "")
+set_target_properties(test_main PROPERTIES OUTPUT_NAME "test_main")
+set_target_properties(test_main PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/linux/x86_64/debug")
+target_include_directories(test_main PRIVATE
+    src
+)
+target_include_directories(test_main PRIVATE
+    /home/tao/.xmake/packages/g/gtest/1.12.1/77b9096bc4b34d9282f672d36b015ba9/include
+    /home/tao/.xmake/packages/g/glog/v0.6.0/98bb9424878c424382eb29e8237853f9/include
+    /home/tao/.xmake/packages/g/gflags/v2.2.2/0f545414272c459b907061d5e923ed20/include
+    /home/tao/.xmake/packages/b/boost/1.81.0/f03df4012c1a40359a765b7f798be77d/include
+    /home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include
+    /home/tao/.xmake/packages/z/zlib/v1.2.13/6c2566e3272548ea9aa218b4a6537908/include
+    /home/tao/.xmake/packages/m/microsoft-gsl/v4.0.0/b588884cb8064346b12df545cbf8e0e7/include
+)
+target_compile_definitions(test_main PRIVATE
+    PROJECT_DIR="/home/tao/projects/rvld"
+)
+target_compile_options(test_main PRIVATE
+    $<$<COMPILE_LANGUAGE:C>:-m64>
+    $<$<COMPILE_LANGUAGE:CXX>:-m64>
+)
+if(MSVC)
+    target_compile_options(test_main PRIVATE $<$<CONFIG:Debug>:-Od>)
+else()
+    target_compile_options(test_main PRIVATE -O0)
+endif()
+if(MSVC)
+    target_compile_options(test_main PRIVATE -Zi)
+else()
+    target_compile_options(test_main PRIVATE -g)
+endif()
+if(MSVC)
+    set_property(TARGET test_main PROPERTY
+        MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
+target_link_libraries(test_main PRIVATE
+    gtest
+    gtest_main
+    gmock
+    glog
+    gflags
+    boost_atomic-mt
+    boost_program_options-mt
+    boost_filesystem-mt
+    bz2
+    z
+    pthread
+    dl
+)
+target_link_directories(test_main PRIVATE
+    /home/tao/.xmake/packages/g/gtest/1.12.1/77b9096bc4b34d9282f672d36b015ba9/lib
+    /home/tao/.xmake/packages/g/glog/v0.6.0/98bb9424878c424382eb29e8237853f9/lib
+    /home/tao/.xmake/packages/g/gflags/v2.2.2/0f545414272c459b907061d5e923ed20/lib
+    /home/tao/.xmake/packages/b/boost/1.81.0/f03df4012c1a40359a765b7f798be77d/lib
+    /home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/lib
+    /home/tao/.xmake/packages/z/zlib/v1.2.13/6c2566e3272548ea9aa218b4a6537908/lib
+)
+target_link_options(test_main PRIVATE
+    -m64
+)
+target_sources(test_main PRIVATE
+    src/ObjectFile.cpp
+    src/InputFile.cpp
+    src/Archive.cpp
+    src/Context.cpp
+    src/ELFFile.cpp
+    src/rvld.cpp
+    src/Utils/BytesReader.cpp
+    src/Utils/Bytes.cpp
+    tests/TestMain.cpp
+    tests/TestInputFile.cpp
 )
 

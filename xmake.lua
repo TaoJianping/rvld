@@ -1,12 +1,24 @@
 add_rules("mode.debug", "mode.release")
 
-add_requires("glog")
+add_requires("glog", "gtest","microsoft-gsl", "boost", {configs = {
+    program_options = true
+}})
+
+local PROJECT_DIR = os.projectdir()
 
 target("rvld")
     set_languages("cxxlatest")
     set_kind("binary")
-    add_files("src/*.cpp") 
-    add_packages("glog")
+    add_files("src/*.cpp", "src/Utils/*.cpp")
+    add_packages("glog", "boost", "microsoft-gsl")
+
+target("test_main")
+    set_languages("cxxlatest")
+    set_kind("binary")
+    add_includedirs("src")
+    add_files("src/*.cpp|main.cpp", "src/Utils/*.cpp","tests/*.cpp")
+    add_packages("gtest", "glog", "boost", "microsoft-gsl")
+    add_defines(string.format("PROJECT_DIR=\"%s\"", PROJECT_DIR))
 
 --
 -- If you want to known more usage about xmake, please see https://xmake.io

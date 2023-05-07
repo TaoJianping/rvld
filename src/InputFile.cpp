@@ -4,10 +4,10 @@
 #include <algorithm>
 
 InputFile::InputFile(fs::path p) :
-    _filePath(std::move(p))
+    _filePath(std::move(p)), _name(p.filename())
 {
     std::ifstream file(_filePath, std::ios::binary);
-
+    // TODO 不应该一次性载入内存的，以后有机会改
     if (file)
     {
         // 获取文件大小
@@ -22,7 +22,6 @@ InputFile::InputFile(fs::path p) :
         if (file.read(buffer.data(), size))
         {
             // 读取成功，处理数据
-            // ...
             for (auto b : buffer)
             {
                 _contents.push_back(static_cast<std::byte>(b));
@@ -37,22 +36,101 @@ InputFile::InputFile(fs::path p) :
     };
 }
 
+FileType InputFile::GetFileType()
+{
+    if (_contents.empty())
+    {
+        return FileType::Empty;
+    }
+    else if (_checkMagic(ELF_MAGIC))
+    {
+        return FileType::ELF;
+    }
+    else if (_checkMagic(ARCHIVE_MAGIC))
+    {
+        return FileType::Archive;
+    }
+    else
+    {
+        return FileType::Unknown;
+    }
+}
+
 bool InputFile::IsElfFile()
 {
     if (_contents.empty())
     {
         return false;
     }
-    return _checkMagic();
+
+    return GetFileType() == FileType::ELF;
 };
 
-bool InputFile::_checkMagic()
-{
-    BytesVector ELF_HEADER{ std::byte(0x7F), std::byte(0x45), std::byte(0x4C), std::byte(0x46) };
-    return std::equal(ELF_HEADER.begin(), ELF_HEADER.end(), _contents.begin());
-}
-
-const BytesVector InputFile::GetContents()
+Bytes InputFile::GetContents()
 {
     return _contents;
+}
+
+bool InputFile::_checkMagic(const char* magic)
+{
+    std::size_t len = std::strlen(magic);
+    if (FileSize() < len)
+        return false;
+
+    for (int i = 0; i < len; ++i)
+    {
+        char a = static_cast<char>(_contents.at(i));
+        char b = magic[i];
+        if (a != b)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool InputFile::Exists()
+{
+    return std::filesystem::exists(_filePath);
+}
+
+size_t InputFile::FileSize()
+{
+    return _contents.size();
+}
+
+InputFile::InputFile(std::string name, Bytes content, InputFile* parent):
+    _name(std::move(name)), _contents(std::move(content))
+{
+
+}
+std::string InputFile::GetName()
+{
+    return _name;
+}
+
+ELF::ElfType InputFile::GetElfFileType()
+{
+    if (!IsElfFile())
+    {
+        LOG(ERROR) << "Not Elf File";
+        return ELF::ElfType::ET_NONE;
+    }
+    auto ehdr = ELF::Elf64_Ehdr{};
+    std::memcpy(&ehdr, _contents.data(), sizeof(ehdr));
+    return static_cast<ELF::ElfType>(ehdr.e_type);
+}
+
+bool InputFile::IsArchiveFile()
+{
+    if (_contents.empty())
+    {
+        return false;
+    }
+
+    return GetFileType() == FileType::Archive;
+}
+gsl::span<std::byte> InputFile::GetContentView()
+{
+    return {_contents.data(), _contents.size()};
 }

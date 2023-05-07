@@ -1,43 +1,28 @@
 #include <cstdlib>
-#include <format>
 #include "rvld.h"
 #include <span>
 #include <concepts>
 
 int main(int argc, char** argv)
 {
-    fs::path filePath = "/home/tao/projects/xmake_projects/rvld/tests/out/tests/hello/a.o";
-
+//     google::InitGoogleLogging("rvld");
     Linker linker{};
+    auto ctx = linker.NewContext();
+    //    ctx->PrintArgs(argc, argv);
+    ctx->ParseArgs(argc, argv);
 
-    auto inputFile = linker.NewInputFile(filePath);
-    if (!inputFile)
+    if (ctx->GetMachineType() == MachineType::None)
     {
-        LOG(ERROR) << "Create File Failed";
-        return 1;
-    }
-    if (!inputFile->IsElfFile())
-    {
-        LOG(ERROR) << "THIS IS NOT ELF FILE";
-        return 1;
-    }
-    auto objFile = linker.NewObjectFile(inputFile);
-    objFile->Parse();
-    auto ehdr = objFile->ReadELFHeader();
-    auto shdrs = objFile->ReadSectionHeaders();
-    auto shstrsectContent = objFile->ReadSectionContent(ehdr.e_shstrndx);
-
-    auto symbols = objFile->ReadSymbolTable();
-    auto stringTable = objFile->ReadStringTable();
-
-    for (auto &s : symbols)
-    {
-        LOG(INFO) << objFile->ReadSymbolName(s);
+        // TODO
+        ctx->SetMachineType(MachineType::RISCV64);
     }
 
+    auto files = linker.ReadInputFiles(ctx);
 
-    delete inputFile;
-    delete objFile;
+    ctx->FillUpObjects(files);
 
+    auto objs = ctx->GetObjectFiles();
+    LOG(INFO) << "Objs Length -> " << objs.size();
+//    google::ShutdownGoogleLogging();
     return 0;
 }

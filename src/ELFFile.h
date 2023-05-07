@@ -2,6 +2,9 @@
 
 #include "InputFile.h"
 #include "Define.h"
+#include "Utils/Bytes.h"
+#include <optional>
+
 
 namespace ELF
 {
@@ -10,39 +13,40 @@ namespace ELF
     public:
         explicit ElfFile(InputFile* file);
 
-        Elf64_Ehdr ReadELFHeader();
         Elf64_Ehdr GetELFHeader();
-        std::vector<Elf64_Shdr> ReadSectionHeaders();
+        Elf64_Ehdr ReadELFHeader();
         std::vector<Elf64_Shdr> GetSectionHeaders();
+        std::vector<Elf64_Shdr> ReadSectionHeaders();
         Elf64_Shdr ReadSectionNameStringTableHeader();
-        BytesVector ReadSectionNameStringTable();
+        BytesView ReadSectionNameStringTable();
         std::string ReadSectionName(Elf64_Shdr shdr);
         Elf64_Shdr ReadSymbolTableSectionHeader();
         std::vector<Elf64_Sym> ReadSymbolTable();
-
         Elf64_Shdr ReadStringTableSectionHeader();
-        BytesVector ReadStringTable();
+        BytesView ReadStringTable();
         std::string ReadSymbolName(Elf64_Sym sym);
-
         std::optional<ELF::Elf64_Shdr> FindSectionHeader(ElfSectionType ty);
         InputFile* GetSourceFile();
-        BytesVector ReadSectionContent(Elf64_Shdr shdr);
-        BytesVector ReadSectionContent(uint16_t index);
-        Elf64_Shdr ReadSectionHeader(uint16_t index);
-        void PrintRowContent(BytesVector bytesVector);
-        void Parse();
+        std::string GetName();
 
         template<typename T>
         std::vector<T> ReadStructVector(uint64_t start, uint64_t num);
 
+        BytesView ReadSectionContent(Elf64_Shdr shdr);
+        BytesView ReadSectionContent(uint16_t index);
+        Elf64_Shdr ReadSectionHeader(uint16_t index);
+        BytesView ReadContentView(size_t start, size_t size);
+        Bytes ReadRowBytesContent(size_t start, size_t size);
 
     private:
-        BytesVector _ReadRowBytesContent(uint64_t start, uint64_t size);
-
         InputFile* _localFile = nullptr;
         Elf64_Ehdr _elfHeader;
         std::vector<Elf64_Shdr> _elfSectionHeaders;
         std::vector<Elf64_Sym> _elfSymbols;
-        BytesVector _sectionNameStringTable;
+        BytesView _sectionNameStringTable;
+
+        bool _initialize();
+
+
     };
 }

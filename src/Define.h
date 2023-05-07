@@ -5,6 +5,21 @@
 #ifndef RVLD_DEFINE_H
 #define RVLD_DEFINE_H
 
+
+enum class FileType : uint32_t
+{
+    Unknown,
+    Empty,
+    ELF,
+    Archive,
+};
+
+enum class MachineType : uint8_t
+{
+    None,
+    RISCV64,
+};
+
 namespace ELF
 {
     using Elf64_Word = uint32_t;
@@ -139,6 +154,76 @@ namespace ELF
         ET_HIOS = 0xfeff, // Operating system-specific
         ET_LOPROC = 0xff00, // Processor-specific
         ET_HIPROC = 0xffff // Processor-specific
+    };
+
+    enum class ELFMachine : uint16_t {
+        NoSpecific = 0x00,
+        ATTWe32100 = 0x01,
+        SPARC = 0x02,
+        x86 = 0x03,
+        Motorola68000 = 0x04,
+        Motorola88000 = 0x05,
+        IntelMCU = 0x06,
+        Intel80860 = 0x07,
+        MIPS = 0x08,
+        IBMSystem370 = 0x09,
+        MIPSRS3000LittleEndian = 0x0A,
+        HewlettPackardPARISC = 0x0E,
+        Intel80960 = 0x13,
+        PowerPC = 0x14,
+        PowerPC64Bit = 0x15,
+        S390IncludingS390x = 0x16,
+        IBMSPUSPC = 0x17,
+        NECV800 = 0x24,
+        FujitsuFR20 = 0x25,
+        TRWRH32 = 0x26,
+        MotorolaRCE = 0x27,
+        ArmUpToArmv7AArch32 = 0x28,
+        DigitalAlpha = 0x29,
+        SuperH = 0x2A,
+        SPARCVersion9 = 0x2B,
+        SiemensTriCoreEmbeddedProcessor = 0x2C,
+        ArgonautRISCCore = 0x2D,
+        HitachiH8300 = 0x2E,
+        HitachiH8300H = 0x2F,
+        HitachiH8S = 0x30,
+        HitachiH8500 = 0x31,
+        IA64 = 0x32,
+        StanfordMIPSX = 0x33,
+        MotorolaColdFire = 0x34,
+        MotorolaM68HC12 = 0x35,
+        FujitsuMMAMultimediaAccelerator = 0x36,
+        SiemensPCP = 0x37,
+        SonynCPUEmbeddedRISCProcessor = 0x38,
+        DensoNDR1Microprocessor = 0x39,
+        MotorolaStarCoreProcessor = 0x3A,
+        ToyotaME16Processor = 0x3B,
+        STMicroelectronicsST100Processor = 0x3C,
+        AdvancedLogicCorpTinyJEmbeddedProcessorFamily = 0x3D,
+        AMDx8664 = 0x3E,
+        SonyDSPProcessor = 0x3F,
+        DigitalEquipmentCorpPDP10 = 0x40,
+        DigitalEquipmentCorpPDP11 = 0x41,
+        SiemensFX66Microcontroller = 0x42,
+        STMicroelectronicsST9Plus816BitMicrocontroller = 0x43,
+        STMicroelectronicsST78BitMicrocontroller = 0x44,
+        MotorolaMC68HC16Microcontroller = 0x45,
+        MotorolaMC68HC11Microcontroller = 0x46,
+        MotorolaMC68HC08Microcontroller = 0x47,
+        MotorolaMC68HC05Microcontroller = 0x48,
+        SiliconGraphicsSVx = 0x49,
+        STMicroelectronicsST198BitMicrocontroller = 0x4A,
+        DigitalVAX = 0x4B,
+        AxisCommunications32BitEmbeddedProcessor = 0x4C,
+        InfineonTechnologies32BitEmbeddedProcessor = 0x4D,
+        Element14_64BitDSPProcessor = 0x4E,
+        LSILogic16BitDSPProcessor = 0x4F,
+        TMS320C6000Family = 0x8C,
+        MCSTElbruse2k = 0xAF,
+        Arm64BitsArmv8AArch64 = 0xB7,
+        ZilogZ80 = 0xDC,
+        RISC_V = 0xF3,
+        BerkeleyPacketFilter = 0xF7,
     };
 
     constexpr auto EHDR64_SIZE = sizeof(Elf64_Ehdr{});
