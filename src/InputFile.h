@@ -8,7 +8,7 @@
 #include <array>
 #include <gsl/span>
 
-#include "glog/logging.h"
+#include "spdlog/spdlog.h"
 
 #include "Define.h"
 #include "Utils/Bytes.h"
@@ -21,24 +21,31 @@ constexpr char ARCHIVE_MAGIC[] = "!<arch>\n";
 class InputFile
 {
 public:
-    explicit InputFile(fs::path p);
-    InputFile(std::string name, Bytes content, InputFile* parent = nullptr);
+    explicit InputFile(const fs::path& p);
+    InputFile(std::string name, Bytes content, InputFile* parent = nullptr, bool isAlive = true);
 
     bool Exists();
     bool IsElfFile();
     bool IsArchiveFile();
+
     size_t FileSize();
     std::string GetName();
     Bytes GetContents();
-    gsl::span<std::byte> GetContentView();
+    BytesView GetContentView();
     FileType GetFileType();
     ELF::ElfType GetElfFileType();
+    [[nodiscard]] bool Alive() const;
+    void SetAlive();
+    InputFile* ParentFile();
+
+    fs::path GetPath();
 
 private:
     fs::path _filePath;
     Bytes _contents{};
     InputFile* _parent = nullptr;
     std::string _name{};
+    bool _isAlive = true;
 
     bool _checkMagic(const char* magic);
 

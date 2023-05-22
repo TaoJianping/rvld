@@ -63,6 +63,10 @@ struct ArHdr
             {
                 return nameStr.substr(0, endPos);
             }
+            else
+            {
+                return "";
+            }
         }
         else
         {

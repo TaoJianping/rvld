@@ -31,6 +31,37 @@ namespace ELF
     using Elf32_Half = uint16_t;
     using Elf32_Addr = uint32_t;
 
+    /**
+     * Special section indices in the ELF format
+     */
+    enum class ElfSpecialSectionIndex : uint16_t {
+        UNDEFINED = 0,          // Undefined section
+        LORESERVE = 0xff00,     // Start of reserved indices
+        LOPROC    = 0xff00,     // Start of processor-specific section range
+        BEFORE    = 0xff00,     // Order section before all others (used by Solaris)
+        AFTER     = 0xff01,     // Order section after all others (used by Solaris)
+        HIPROC    = 0xff1f,     // End of processor-specific section range
+        LOOS      = 0xff20,     // Start of OS-specific section range
+        HIOS      = 0xff3f,     // End of OS-specific section range
+        ABSOLUTE  = 0xfff1,     // Associated symbol is absolute
+        COMMON    = 0xfff2,     // Associated symbol is common
+        XINDEX    = 0xffff,     // Index is in extra table
+        HIRESERVE = 0xffff      // End of reserved indices
+    };
+
+    enum class STB : uint8_t
+    {
+        LOCAL = 0,          // Local symbol
+        GLOBAL = 1,         // Global symbol
+        WEAK = 2,           // Weak symbol
+        NUM = 3,            // Number of defined types
+        LOOS = 10,          // Start of OS-specific
+        GNU_UNIQUE = 10,    // Unique symbol (GNU extension)
+        HIOS = 12,          // End of OS-specific
+        LOPROC = 13,        // Start of processor-specific
+        HIPROC = 15         // End of processor-specific
+    };
+
     struct Elf64_Ehdr
     {
         uint8_t e_ident[16];
@@ -103,6 +134,31 @@ namespace ELF
         Elf64_Half st_shndx;
         Elf64_Addr st_value;
         Elf64_Xword st_size;
+
+        [[nodiscard]] bool IsLocalSymbol() const
+        {
+            return (static_cast<STB>(st_info >> 4) == STB::LOCAL);
+        }
+
+        [[nodiscard]] bool IsGlobalSymbol() const
+        {
+            return (static_cast<STB>(st_info >> 4) == STB::GLOBAL);
+        }
+
+        [[nodiscard]] bool IsAbsSymbol() const
+        {
+            return static_cast<ElfSpecialSectionIndex>(st_shndx) == ElfSpecialSectionIndex::ABSOLUTE;
+        }
+
+        [[nodiscard]] bool IsUndefinedSymbol() const
+        {
+            return static_cast<ElfSpecialSectionIndex>(st_shndx) == ElfSpecialSectionIndex::UNDEFINED;
+        }
+
+        [[nodiscard]] bool NeedExtendSection() const
+        {
+            return static_cast<ElfSpecialSectionIndex>(st_shndx) == ElfSpecialSectionIndex::XINDEX;
+        }
     };
 
     struct Elf32_Sym
@@ -225,6 +281,8 @@ namespace ELF
         RISC_V = 0xF3,
         BerkeleyPacketFilter = 0xF7,
     };
+
+
 
     constexpr auto EHDR64_SIZE = sizeof(Elf64_Ehdr{});
     constexpr auto SHDR64_SIZE = sizeof(Elf64_Shdr{});

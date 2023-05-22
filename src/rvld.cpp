@@ -2,6 +2,7 @@
 #include <utility>
 #include "rvld.h"
 #include "Archive.h"
+
 namespace fs = std::filesystem;
 
 InputFile* Linker::NewInputFile(fs::path path)
@@ -16,16 +17,19 @@ InputFile* Linker::NewInputFile(const std::string& path)
 
     if (!fs::exists(filePath))
     {
-        LOG(INFO) << "NOT EXIST FILE";
+        spdlog::error("NOT EXIST FILE");
         return nullptr;
     }
 
     return new InputFile{ filePath };
 }
 
-ObjectFile* Linker::NewObjectFile(InputFile* localFile)
+ELF::ObjectFile* Linker::NewObjectFile(InputFile* localFile)
 {
-    auto objFile = new ObjectFile{ localFile };
+    if (!CheckFileCompatibility(GetContext(), localFile)) {
+        spdlog::error("incompatible file type");
+    }
+    auto objFile = new ELF::ObjectFile{ localFile };
     return objFile;
 }
 
@@ -46,7 +50,7 @@ std::vector<InputFile*> Linker::ReadInputFiles(Context* ctx)
     {
         auto file = FindLibrary(ctx, lib);
         if (file == nullptr || file->GetFileType() != FileType::Archive) {
-            LOG(ERROR) << "File Not Right";
+            spdlog::error("File Not Right");
             break ;
         }
         passedFiles.push_back(file);
@@ -57,14 +61,13 @@ std::vector<InputFile*> Linker::ReadInputFiles(Context* ctx)
         if (strutil::ends_with(uc, ".o"))
         {
             passedFiles.push_back(new InputFile{ std::filesystem::path{ uc } });
-            //            LOG(INFO) << "Find Unrecognized Option" << uc;
         }
     }
 
     return passedFiles;
 }
 
-InputFile* Linker::FindLibrary(Context* ctx, const std::string& lib)
+InputFile* Linker:: FindLibrary(Context* ctx, const std::string& lib)
 {
     std::string libName = "lib" + lib + ".a";
     for (auto& libPath : ctx->Args.LibraryPaths)
@@ -77,7 +80,7 @@ InputFile* Linker::FindLibrary(Context* ctx, const std::string& lib)
         }
     }
 
-    LOG(ERROR) << "Not Find Lib";
+    spdlog::error("Not Find Lib");
     return nullptr;
 }
 
@@ -103,10 +106,35 @@ bool Linker::FillUpObjects(Context* ctx, std::vector<InputFile*> files)
         }
         else
         {
-            LOG(INFO) << "Not Support Type";
+            spdlog::error("Not Support Type");
         }
     }
 
 
     return true;
+}
+
+bool Linker::CheckFileCompatibility(Context* ctx, InputFile* inputFile)
+{
+    auto ft = inputFile->GetFileType();
+    if (ft == FileType::ELF && inputFile->GetElfFileType() == ELF::ElfType::ET_REL)
+    {
+        ELF::ObjectFile obj{inputFile};
+        return obj.GetMachineType() == ctx->Args.Emulation;
+    }
+
+    return false;
+}
+void Linker::SetDefaultContext(Context* ctx)
+{
+    _defaultContext = ctx;
+}
+
+Context* Linker::GetContext()
+{
+    return _defaultContext;
+}
+Linker::Linker()
+{
+    SetDefaultContext(new Context{});
 }

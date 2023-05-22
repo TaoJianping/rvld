@@ -11,6 +11,7 @@ Archive::Archive(InputFile* file) :
 
 std::vector<InputFile*> Archive::ReadArchiveMembers()
 {
+    fs::path absolutePath = fs::absolute(_localFile->GetPath());
     std::vector<InputFile*> ret{};
     auto content = _localFile->GetContents();
     auto reader = BytesReader(content);
@@ -30,17 +31,13 @@ std::vector<InputFile*> Archive::ReadArchiveMembers()
         auto ah = reader.ReadStruct<ArHdr>();
         if (!ah.IsValid())
         {
-            LOG(ERROR) << "Identifier: " << std::string(ah.name, 16);
-            LOG(ERROR) << "Timestamp: " << std::string(ah.date, 12);
-            LOG(ERROR) << "Owner ID: " << std::string(ah.uid, 6);
-            LOG(ERROR) << "Group ID: " << std::string(ah.gid, 6);
-            LOG(ERROR) << "File mode: " << std::string(ah.mode, 8);
-            LOG(ERROR) << "Size: " << std::string(ah.size, 10);
-            break;
-        }
-
-        if (!ah.IsValid())
-        {
+            spdlog::error("Not Valid ArHdr");
+            //            LOG(ERROR) << "Identifier: " << std::string(ah.name, 16);
+            //            LOG(ERROR) << "Timestamp: " << std::string(ah.date, 12);
+            //            LOG(ERROR) << "Owner ID: " << std::string(ah.uid, 6);
+            //            LOG(ERROR) << "Group ID: " << std::string(ah.gid, 6);
+            //            LOG(ERROR) << "File mode: " << std::string(ah.mode, 8);
+            //            LOG(ERROR) << "Size: " << std::string(ah.size, 10);
             break;
         }
 
@@ -48,23 +45,27 @@ std::vector<InputFile*> Archive::ReadArchiveMembers()
 
         if (ah.IsSymTab())
         {
+//            spdlog::info("Find Symbol Table");
         }
 
         if (ah.IsStrTab())
         {
+//            spdlog::info("Find String Table");
             stringTable.insert(stringTable.begin(), contentBytes.begin(), contentBytes.end());
         }
 
-//        LOG(INFO) << "name -> " << ah.ReadName(stringTable);
         count++;
 
         // TODO 有些没释放
-        auto file = new InputFile{ah.ReadName(stringTable), contentBytes};
-        if (file->GetFileType() == FileType::ELF && file->GetElfFileType() == ELF::ElfType::ET_REL) {
+        auto file = new InputFile{ ah.ReadName(stringTable), contentBytes, _localFile, false };
+        if (file->GetFileType() == FileType::ELF && file->GetElfFileType() == ELF::ElfType::ET_REL)
+        {
             ret.push_back(file);
         }
+        else
+        {
+            delete file;
+        }
     }
-
-    LOG(INFO) << "PARSE FILE COUNT -> " << count;
     return ret;
 }

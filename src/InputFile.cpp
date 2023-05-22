@@ -1,10 +1,9 @@
 #include "InputFile.h"
 
 #include <utility>
-#include <algorithm>
 
-InputFile::InputFile(fs::path p) :
-    _filePath(std::move(p)), _name(p.filename())
+InputFile::InputFile(const fs::path& p) :
+    _filePath(p), _name(p.filename().c_str())
 {
     std::ifstream file(_filePath, std::ios::binary);
     // TODO 不应该一次性载入内存的，以后有机会改
@@ -29,7 +28,7 @@ InputFile::InputFile(fs::path p) :
         }
         else
         {
-            LOG(ERROR) << "Read Failed";
+            spdlog::error("Read Failed");
         }
 
         file.close();
@@ -99,8 +98,8 @@ size_t InputFile::FileSize()
     return _contents.size();
 }
 
-InputFile::InputFile(std::string name, Bytes content, InputFile* parent):
-    _name(std::move(name)), _contents(std::move(content))
+InputFile::InputFile(std::string name, Bytes content, InputFile* parent, bool isAlive):
+    _name(std::move(name)), _contents(std::move(content)), _isAlive(isAlive), _parent(parent)
 {
 
 }
@@ -113,7 +112,7 @@ ELF::ElfType InputFile::GetElfFileType()
 {
     if (!IsElfFile())
     {
-        LOG(ERROR) << "Not Elf File";
+        spdlog::error("Not Elf File");;
         return ELF::ElfType::ET_NONE;
     }
     auto ehdr = ELF::Elf64_Ehdr{};
@@ -133,4 +132,22 @@ bool InputFile::IsArchiveFile()
 gsl::span<std::byte> InputFile::GetContentView()
 {
     return {_contents.data(), _contents.size()};
+}
+
+bool InputFile::Alive() const
+{
+    return _isAlive;
+}
+
+fs::path InputFile::GetPath()
+{
+    return _filePath;
+}
+void InputFile::SetAlive()
+{
+    _isAlive = true;
+}
+InputFile* InputFile::ParentFile()
+{
+    return _parent;
 }

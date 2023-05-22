@@ -1,23 +1,31 @@
 add_rules("mode.debug", "mode.release")
 
-add_requires("glog", "gtest","microsoft-gsl", "boost", {configs = {
+add_requires("glog", "spdlog","gtest","microsoft-gsl", "boost", "fmt",{configs = {
     program_options = true
 }})
 
 local PROJECT_DIR = os.projectdir()
 
+--task("test")
+--on_run(function ()
+--    os.exec("xmake f -m debug --test=y")
+--    os.exec("xmake build -g test")
+--    os.exec("xmake run -g test")
+--end)
+
 target("rvld")
     set_languages("cxxlatest")
     set_kind("binary")
     add_files("src/*.cpp", "src/Utils/*.cpp")
-    add_packages("glog", "boost", "microsoft-gsl")
+    add_packages("boost", "microsoft-gsl", "spdlog")
+    add_defines(string.format("PROJECT_DIR=\"%s\"", PROJECT_DIR))
 
 target("test_main")
     set_languages("cxxlatest")
     set_kind("binary")
     add_includedirs("src")
     add_files("src/*.cpp|main.cpp", "src/Utils/*.cpp","tests/*.cpp")
-    add_packages("gtest", "glog", "boost", "microsoft-gsl")
+    add_packages("gtest", "boost", "microsoft-gsl", "spdlog")
     add_defines(string.format("PROJECT_DIR=\"%s\"", PROJECT_DIR))
 
 --

@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <gsl/span>
+#include <cstring>
 
 using BytesView = gsl::span<std::byte>;
 

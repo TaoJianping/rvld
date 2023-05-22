@@ -12,12 +12,14 @@ add_executable(rvld "")
 set_target_properties(rvld PROPERTIES OUTPUT_NAME "rvld")
 set_target_properties(rvld PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/linux/x86_64/debug")
 target_include_directories(rvld PRIVATE
-    /home/tao/.xmake/packages/g/glog/v0.6.0/98bb9424878c424382eb29e8237853f9/include
-    /home/tao/.xmake/packages/g/gflags/v2.2.2/0f545414272c459b907061d5e923ed20/include
     /home/tao/.xmake/packages/b/boost/1.81.0/f03df4012c1a40359a765b7f798be77d/include
     /home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include
     /home/tao/.xmake/packages/z/zlib/v1.2.13/6c2566e3272548ea9aa218b4a6537908/include
     /home/tao/.xmake/packages/m/microsoft-gsl/v4.0.0/b588884cb8064346b12df545cbf8e0e7/include
+    /home/tao/.xmake/packages/s/spdlog/v1.11.0/fd19fb415d3a492d881bd3d3e093b901/include
+)
+target_compile_definitions(rvld PRIVATE
+    PROJECT_DIR="/home/tao/projects/rvld"
 )
 target_compile_options(rvld PRIVATE
     $<$<COMPILE_LANGUAGE:C>:-m64>
@@ -38,8 +40,6 @@ if(MSVC)
         MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
 target_link_libraries(rvld PRIVATE
-    glog
-    gflags
     boost_atomic-mt
     boost_program_options-mt
     boost_filesystem-mt
@@ -49,8 +49,6 @@ target_link_libraries(rvld PRIVATE
     dl
 )
 target_link_directories(rvld PRIVATE
-    /home/tao/.xmake/packages/g/glog/v0.6.0/98bb9424878c424382eb29e8237853f9/lib
-    /home/tao/.xmake/packages/g/gflags/v2.2.2/0f545414272c459b907061d5e923ed20/lib
     /home/tao/.xmake/packages/b/boost/1.81.0/f03df4012c1a40359a765b7f798be77d/lib
     /home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/lib
     /home/tao/.xmake/packages/z/zlib/v1.2.13/6c2566e3272548ea9aa218b4a6537908/lib
@@ -59,7 +57,6 @@ target_link_options(rvld PRIVATE
     -m64
 )
 target_sources(rvld PRIVATE
-    src/ObjectFile.cpp
     src/InputFile.cpp
     src/Archive.cpp
     src/Context.cpp
@@ -79,12 +76,11 @@ target_include_directories(test_main PRIVATE
 )
 target_include_directories(test_main PRIVATE
     /home/tao/.xmake/packages/g/gtest/1.12.1/77b9096bc4b34d9282f672d36b015ba9/include
-    /home/tao/.xmake/packages/g/glog/v0.6.0/98bb9424878c424382eb29e8237853f9/include
-    /home/tao/.xmake/packages/g/gflags/v2.2.2/0f545414272c459b907061d5e923ed20/include
     /home/tao/.xmake/packages/b/boost/1.81.0/f03df4012c1a40359a765b7f798be77d/include
     /home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include
     /home/tao/.xmake/packages/z/zlib/v1.2.13/6c2566e3272548ea9aa218b4a6537908/include
     /home/tao/.xmake/packages/m/microsoft-gsl/v4.0.0/b588884cb8064346b12df545cbf8e0e7/include
+    /home/tao/.xmake/packages/s/spdlog/v1.11.0/fd19fb415d3a492d881bd3d3e093b901/include
 )
 target_compile_definitions(test_main PRIVATE
     PROJECT_DIR="/home/tao/projects/rvld"
@@ -111,8 +107,6 @@ target_link_libraries(test_main PRIVATE
     gtest
     gtest_main
     gmock
-    glog
-    gflags
     boost_atomic-mt
     boost_program_options-mt
     boost_filesystem-mt
@@ -123,8 +117,6 @@ target_link_libraries(test_main PRIVATE
 )
 target_link_directories(test_main PRIVATE
     /home/tao/.xmake/packages/g/gtest/1.12.1/77b9096bc4b34d9282f672d36b015ba9/lib
-    /home/tao/.xmake/packages/g/glog/v0.6.0/98bb9424878c424382eb29e8237853f9/lib
-    /home/tao/.xmake/packages/g/gflags/v2.2.2/0f545414272c459b907061d5e923ed20/lib
     /home/tao/.xmake/packages/b/boost/1.81.0/f03df4012c1a40359a765b7f798be77d/lib
     /home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/lib
     /home/tao/.xmake/packages/z/zlib/v1.2.13/6c2566e3272548ea9aa218b4a6537908/lib
@@ -133,7 +125,6 @@ target_link_options(test_main PRIVATE
     -m64
 )
 target_sources(test_main PRIVATE
-    src/ObjectFile.cpp
     src/InputFile.cpp
     src/Archive.cpp
     src/Context.cpp
@@ -142,6 +133,8 @@ target_sources(test_main PRIVATE
     src/Utils/BytesReader.cpp
     src/Utils/Bytes.cpp
     tests/TestMain.cpp
+    tests/TestObjectFile.cpp
+    tests/TestLinker.cpp
     tests/TestInputFile.cpp
 )
 
