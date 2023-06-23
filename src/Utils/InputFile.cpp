@@ -113,7 +113,7 @@ ELF::ElfType InputFile::GetElfFileType()
     if (!IsElfFile())
     {
         spdlog::error("Not Elf File");;
-        return ELF::ElfType::ET_NONE;
+        return ELF::ElfType::NONE;
     }
     auto ehdr = ELF::Elf64_Ehdr{};
     std::memcpy(&ehdr, _contents.data(), sizeof(ehdr));

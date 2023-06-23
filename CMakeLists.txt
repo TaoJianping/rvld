@@ -57,14 +57,22 @@ target_link_options(rvld PRIVATE
     -m64
 )
 target_sources(rvld PRIVATE
-    src/InputFile.cpp
-    src/Archive.cpp
+    src/InputSection.cpp
+    src/Section.cpp
+    src/OutputSHdr.cpp
+    src/OutputSection.cpp
+    src/OutputEhdr.cpp
     src/Context.cpp
+    src/Chunk.cpp
     src/main.cpp
     src/ELFFile.cpp
-    src/rvld.cpp
+    src/Linker.cpp
+    src/Symbol.cpp
     src/Utils/BytesReader.cpp
     src/Utils/Bytes.cpp
+    src/Utils/InputFile.cpp
+    src/Utils/Archive.cpp
+    src/Utils/OutputFile.cpp
 )
 
 # target
@@ -125,13 +133,23 @@ target_link_options(test_main PRIVATE
     -m64
 )
 target_sources(test_main PRIVATE
-    src/InputFile.cpp
-    src/Archive.cpp
+    src/InputSection.cpp
+    src/Section.cpp
+    src/OutputSHdr.cpp
+    src/OutputSection.cpp
+    src/OutputEhdr.cpp
     src/Context.cpp
+    src/Chunk.cpp
     src/ELFFile.cpp
-    src/rvld.cpp
+    src/Linker.cpp
+    src/Symbol.cpp
     src/Utils/BytesReader.cpp
     src/Utils/Bytes.cpp
+    src/Utils/InputFile.cpp
+    src/Utils/Archive.cpp
+    src/Utils/OutputFile.cpp
+    tests/TestOutputFile.cpp
+    tests/TestUtils.cpp
     tests/TestMain.cpp
     tests/TestObjectFile.cpp
     tests/TestLinker.cpp

@@ -13,10 +13,10 @@ build:
 $(TESTS): %:
 	sh $*
 
-test: build
+test:
 	@xmake config -m debug
 	@xmake project -k cmake
-	@xmake -v
+	@xmake build -v rvld
 	@ln -sf ./build/linux/x86_64/debug/rvld ld
 	@$(SHELL) tests/hello.sh
 
@@ -26,13 +26,12 @@ gtest:
     )
 	@xmake config -m debug
 	@xmake project -k cmake
-	@xmake -v
-	@ln -sf ./build/linux/x86_64/debug/rvld ld
+	@xmake build -v test_main
 	xmake run test_main
 
 clean:
 	rm ./ld
-	rm -rf ./tests/out
+	#rm -rf ./tests/out
 	xmake clean
 
 .PHONY: build clean test

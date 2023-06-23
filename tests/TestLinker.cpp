@@ -5,10 +5,8 @@
 #include "gtest/gtest.h"
 #include "Define.h"
 #include "rvld.h"
-#include "InputFile.h"
-#include "ELFFile.h"
+#include "Utils/InputFile.h"
 #include "spdlog/spdlog.h"
-#include "Context.h"
 
 TEST(TestLinker, test_CheckFileCompatibility)
 {
@@ -17,10 +15,10 @@ TEST(TestLinker, test_CheckFileCompatibility)
     EXPECT_EQ(file.Exists(), true);
     EXPECT_EQ(FileType::ELF, file.GetFileType());
 
-    Context ctx{};
+    rvld::Context ctx{};
     ctx.Args.Emulation = MachineType::RISCV64;
 
-    auto linker = Linker{};
+    auto linker = rvld::Linker{};
     EXPECT_TRUE(linker.CheckFileCompatibility(&ctx, &file));
 
     ctx.Args.Emulation = MachineType::None;
@@ -39,7 +37,7 @@ TEST(TestLinker, test_Context)
 
     std::vector<InputFile*> files{file1, file2, file3, file4, file5};
 
-    Linker linker{};
+    rvld::Linker linker{};
     auto ctx = linker.NewContext();
 
     if (ctx->GetMachineType() == MachineType::None)

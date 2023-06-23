@@ -1,42 +1,37 @@
 #include <iostream>
 #include <utility>
 #include <cassert>
-#include "ELFFile.h"
+#include <cmath>
 
-ELF::ElfFile::ElfFile(InputFile* file) :
+#include "rvld.h"
+
+rvld::ElfFile::ElfFile(InputFile* file) :
     _localFile(file)
 {
     _initialize();
 }
 
-InputFile* ELF::ElfFile::GetSourceFile()
+InputFile* rvld::ElfFile::GetSourceFile()
 {
     assert(_localFile != nullptr);
     return _localFile;
 }
 
-ELF::Elf64_Ehdr ELF::ElfFile::GetELFHeader()
+ELF::Elf64_Ehdr rvld::ElfFile::ReadELFHeader()
 {
     return _elfHeader;
 }
 
-std::vector<ELF::Elf64_Shdr> ELF::ElfFile::GetSectionHeaders()
+std::vector<ELF::Elf64_Shdr> rvld::ElfFile::GetSectionHeaders()
 {
     return _elfSectionHeaders;
 }
 
-ELF::Elf64_Ehdr ELF::ElfFile::ReadELFHeader()
-{
-    auto ehdr = ELF::Elf64_Ehdr{};
-    std::memcpy(&ehdr, GetSourceFile()->GetContentView().data(), EHDR64_SIZE);
-    return ehdr;
-}
-
-std::vector<ELF::Elf64_Shdr> ELF::ElfFile::ReadSectionHeaders()
+std::vector<ELF::Elf64_Shdr> rvld::ElfFile::ReadSectionHeaders()
 {
     std::vector<ELF::Elf64_Shdr> ret{};
     auto sourceFile = GetSourceFile();
-    auto ehdr = GetELFHeader();
+    auto ehdr = ReadELFHeader();
     auto fileContents = sourceFile->GetContentView();
     auto sectionNumber = GetSectionHeaderCount();
     auto sectionOffset = ehdr.e_shoff;
@@ -44,28 +39,28 @@ std::vector<ELF::Elf64_Shdr> ELF::ElfFile::ReadSectionHeaders()
 
     for (auto i = 0; i < sectionNumber; i++)
     {
-        Elf64_Shdr sh{};
-        std::memcpy(&sh, fileContents.data() + start, SHDR64_SIZE);
-        start = start + SHDR64_SIZE;
+        ELF::Elf64_Shdr sh{};
+        std::memcpy(&sh, fileContents.data() + start, ELF::SHDR64_SIZE);
+        start = start + ELF::SHDR64_SIZE;
         ret.emplace_back(sh);
     }
 
     return ret;
 }
 
-ELF::Elf64_Shdr ELF::ElfFile::GetSectionHeader(uint16_t index)
+ELF::Elf64_Shdr rvld::ElfFile::GetSectionHeader(uint16_t index)
 {
     return _elfSectionHeaders.at(index);
 }
 
-BytesView ELF::ElfFile::ReadSectionContent(ELF::Elf64_Shdr shdr)
+BytesView rvld::ElfFile::ReadSectionContent(ELF::Elf64_Shdr shdr)
 {
     auto start = shdr.sh_offset;
     auto size = shdr.sh_size;
     return ReadContentView(start, size);
 }
 
-BytesView ELF::ElfFile::ReadSectionContent(uint16_t index)
+BytesView rvld::ElfFile::ReadSectionContent(uint16_t index)
 {
     auto sh = GetSectionHeader(index);
     auto start = sh.sh_offset;
@@ -73,9 +68,9 @@ BytesView ELF::ElfFile::ReadSectionContent(uint16_t index)
     return ReadContentView(start, size);
 }
 
-size_t ELF::ElfFile::GetSectionNameStringTableIndex()
+size_t rvld::ElfFile::GetSectionNameStringTableIndex()
 {
-    auto ehdr = GetELFHeader();
+    auto ehdr = ReadELFHeader();
     size_t idx = ehdr.e_shstrndx;
     if (idx == static_cast<size_t>(ELF::ElfSpecialSectionIndex::XINDEX))
     {
@@ -85,19 +80,19 @@ size_t ELF::ElfFile::GetSectionNameStringTableIndex()
     return idx;
 }
 
-ELF::Elf64_Shdr ELF::ElfFile::ReadSectionNameStringTableHeader()
+ELF::Elf64_Shdr rvld::ElfFile::ReadSectionNameStringTableHeader()
 {
     auto idx = GetSectionNameStringTableIndex();
     return GetSectionHeader(idx);
 }
 
-BytesView ELF::ElfFile::ReadSectionNameStringTable()
+BytesView rvld::ElfFile::ReadSectionNameStringTable()
 {
     auto idx = GetSectionNameStringTableIndex();
     return ReadSectionContent(idx);
 }
 
-std::string ELF::ElfFile::ReadSectionName(ELF::Elf64_Shdr shdr)
+std::string rvld::ElfFile::ReadSectionName(ELF::Elf64_Shdr shdr)
 {
     auto start = _sectionNameStringTable.begin() + shdr.sh_name;
     auto name = std::string{};
@@ -108,7 +103,7 @@ std::string ELF::ElfFile::ReadSectionName(ELF::Elf64_Shdr shdr)
     return name;
 }
 
-std::optional<ELF::Elf64_Shdr> ELF::ElfFile::FindSectionHeader(ELF::ElfSectionType ty)
+std::optional<ELF::Elf64_Shdr> rvld::ElfFile::FindSectionHeader(ELF::ElfSectionType ty)
 {
     auto sectionHeaders = GetSectionHeaders();
     for (auto sh : sectionHeaders)
@@ -122,7 +117,7 @@ std::optional<ELF::Elf64_Shdr> ELF::ElfFile::FindSectionHeader(ELF::ElfSectionTy
     return std::nullopt;
 }
 
-Bytes ELF::ElfFile::ReadRowBytesContent(uint64_t start, uint64_t size)
+Bytes rvld::ElfFile::ReadRowBytesContent(uint64_t start, uint64_t size)
 {
     auto content = GetSourceFile()->GetContentView();
     Bytes data{};
@@ -132,9 +127,9 @@ Bytes ELF::ElfFile::ReadRowBytesContent(uint64_t start, uint64_t size)
     return data;
 }
 
-ELF::Elf64_Shdr ELF::ElfFile::ReadSymbolTableSectionHeader()
+ELF::Elf64_Shdr rvld::ElfFile::ReadSymbolTableSectionHeader()
 {
-    auto sh = FindSectionHeader(ElfSectionType::SHT_SYMTAB);
+    auto sh = FindSectionHeader(ELF::ElfSectionType::SYMTAB);
     if (!sh.has_value())
     {
         spdlog::error("Not Find Symbol Table Section Header. File name is {}", GetName());
@@ -142,28 +137,28 @@ ELF::Elf64_Shdr ELF::ElfFile::ReadSymbolTableSectionHeader()
     return sh.value();
 }
 
-std::vector<ELF::Elf64_Sym> ELF::ElfFile::ReadSymbolTable()
+std::vector<ELF::Elf64_Sym> rvld::ElfFile::ReadSymbolTable()
 {
     if (!HasSymbolSection())
     {
-//        spdlog::info("This ELF File has no symbol section");
+        //        spdlog::info("This ELF File has no symbol section");
         return {};
     }
     auto symShdr = ReadSymbolTableSectionHeader();
     auto content = ReadSectionContent(symShdr);
     auto num = content.size() / ELF::Sym64_SIZE;
-    auto res = ReadStructVector<Elf64_Sym>(symShdr.sh_offset, num);
+    std::vector<ELF::Elf64_Sym> res = ReadStructVector<ELF::Elf64_Sym>(symShdr.sh_offset, num);
     return res;
 }
 
-ELF::Elf64_Shdr ELF::ElfFile::ReadStringTableSectionHeader()
+ELF::Elf64_Shdr rvld::ElfFile::ReadStringTableSectionHeader()
 {
     auto symShdr = ReadSectionNameStringTableHeader();
     auto stringTableSectionHeader = GetSectionHeader(symShdr.sh_link);
     return stringTableSectionHeader;
 }
 
-BytesView ELF::ElfFile::ReadSymbolTableStringTable()
+BytesView rvld::ElfFile::ReadSymbolTableStringTable()
 {
     auto symShdr = ReadSymbolTableSectionHeader();
     auto stringTableSection = GetSectionHeader(symShdr.sh_link);
@@ -171,13 +166,13 @@ BytesView ELF::ElfFile::ReadSymbolTableStringTable()
     return stringTable;
 }
 
-std::string ELF::ElfFile::ReadSymbolName(ELF::Elf64_Sym sym)
+std::string rvld::ElfFile::ReadSymbolName(ELF::Elf64_Sym sym)
 {
-//    if (!HasSymbolSection())
-//    {
-//        spdlog::info("This ELF File has no symbol section");
-//        return "";
-//    }
+    //    if (!HasSymbolSection())
+    //    {
+    //        spdlog::info("This ELF File has no symbol section");
+    //        return "";
+    //    }
     auto stringTable = ReadSymbolTableStringTable();
     auto start = stringTable.begin() + sym.st_name;
     auto name = std::string{};
@@ -188,31 +183,42 @@ std::string ELF::ElfFile::ReadSymbolName(ELF::Elf64_Sym sym)
     return name;
 }
 
-std::string ELF::ElfFile::GetName()
+std::string rvld::ElfFile::GetName()
 {
     return GetSourceFile()->GetName();
 }
 
-bool ELF::ElfFile::_initialize()
+bool rvld::ElfFile::_initialize()
 {
-    _elfHeader = ReadELFHeader();
-    _elfSectionHeaders = ReadSectionHeaders();
+    // Initialize elf header
+    std::memcpy(&_elfHeader, GetSourceFile()->GetContentView().data(), ELF::EHDR64_SIZE);
+
+    // Initialize elf section header table
+    auto sourceFile = GetSourceFile();
+    auto fileContents = sourceFile->GetContentView();
+    auto sectionNumber = GetSectionHeaderCount();
+    auto start = _elfHeader.e_shoff;
+
+    for (auto i = 0; i < sectionNumber; i++)
+    {
+        ELF::Elf64_Shdr sh{};
+        std::memcpy(&sh, fileContents.data() + start, ELF::SHDR64_SIZE);
+        start = start + ELF::SHDR64_SIZE;
+        _elfSectionHeaders.emplace_back(sh);
+    }
+
     _sectionNameStringTable = ReadSectionNameStringTable();
 
-//    if (HasSymbolSection())
-//    {
-//        _elfSymbols = ReadSymbolTable();
-//    }
     return true;
 }
 
-BytesView ELF::ElfFile::ReadContentView(size_t start, size_t size)
+BytesView rvld::ElfFile::ReadContentView(size_t start, size_t size)
 {
     auto content = this->GetSourceFile()->GetContentView();
     return BytesView{ content.data() + start, size };
 }
 
-size_t ELF::ElfFile::GetSectionHeaderCount()
+size_t rvld::ElfFile::GetSectionHeaderCount()
 {
     /*
      * If the number of sections is greater than or equal to SHN_LORESERVE (0xff00), e_shnum has the value SHN_UNDEF (0)
@@ -233,9 +239,9 @@ size_t ELF::ElfFile::GetSectionHeaderCount()
     return numSection;
 }
 
-MachineType ELF::ElfFile::GetMachineType()
+MachineType rvld::ElfFile::GetMachineType()
 {
-    auto ehdr = GetELFHeader();
+    auto ehdr = ReadELFHeader();
     if (ehdr.e_machine == static_cast<uint16_t>(ELF::ELFMachine::RISC_V))
     {
         return MachineType::RISCV64;
@@ -243,13 +249,13 @@ MachineType ELF::ElfFile::GetMachineType()
     return MachineType::None;
 }
 
-bool ELF::ElfFile::HasSymbolSection()
+bool rvld::ElfFile::HasSymbolSection()
 {
-    return FindSectionHeader(ElfSectionType::SHT_SYMTAB).has_value();
+    return FindSectionHeader(ELF::ElfSectionType::SYMTAB).has_value();
 }
 
 template<typename T>
-std::vector<T> ELF::ElfFile::ReadStructVector(uint64_t start, uint64_t num)
+std::vector<T> rvld::ElfFile::ReadStructVector(uint64_t start, uint64_t num)
 {
     std::vector<T> ret{};
     auto sourceFile = GetSourceFile();
@@ -267,69 +273,60 @@ std::vector<T> ELF::ElfFile::ReadStructVector(uint64_t start, uint64_t num)
     return ret;
 }
 
-ELF::ObjectFile::ObjectFile(InputFile* localFile) :
+rvld::ObjectFile::ObjectFile(InputFile* localFile) :
     ElfFile(localFile)
 {
     _InitializeInputSections();
     _InitializeSymbols();
+    _InitializeMergeableSections();
 }
 
-void ELF::ObjectFile::_InitializeInputSections()
+void rvld::ObjectFile::_InitializeInputSections()
 {
     auto shCount = GetSectionHeaderCount();
     if (shCount == 0)
         return;
 
+//    spdlog::info("File {} has {} sections", GetName(), shCount);
     _inputSections.insert(_inputSections.end(), shCount, nullptr);
 
     for (size_t i = 0; i < shCount; i++)
     {
         auto sh = GetSectionHeader(i);
-        switch (static_cast<ElfSectionType>(sh.sh_type))
+        switch (static_cast<ELF::ElfSectionType>(sh.sh_type))
         {
-            //        case ElfSectionType::SHT_GROUP:
-            //        {
-            //            break;
-            //        }
-        case ElfSectionType::SHT_SYMTAB:
+        case ELF::ElfSectionType::GROUP:
+        case ELF::ElfSectionType::STRTAB:
+        case ELF::ElfSectionType::REL:
+        case ELF::ElfSectionType::RELA:
+        case ELF::ElfSectionType::NULL_:
         {
-//            spdlog::info("One greater than the symbol table index of the last local symbol (binding STB_LOCAL) -> {}", sh.sh_info);
-            _globalSymbolStartIndex = sh.sh_info;
-            break;
+            break ;
         }
-            //        case ElfSectionType::SHT_STRTAB:
-            //        {
-            //            break;
-            //        }
-            //        case ElfSectionType::SHT_REL:
-            //        {
-            //            break;
-            //        }
-            //        case ElfSectionType::SHT_RELA:
-            //        {
-            //            break;
-            //        }
-            //        case ElfSectionType::SHT_NULL:
-            //        {
-            //            break;
-            //        }
-        case ElfSectionType::SHT_SYMTAB_SHNDX:
+        case ELF::ElfSectionType::SYMTAB:
+        {
+            // spdlog::info("One greater than the symbol table index of the last local symbol (binding STB_LOCAL) -> {}", sh.sh_info);
+            _globalSymbolStartIndex = sh.sh_info;
+            break ;
+        }
+        case ELF::ElfSectionType::SYMTAB_SHNDX:
         {
             // initialize SHT_SYMTAB_SHNDX
-            auto content = ReadSectionContent(sh);
-            _symbolTableShnDx.insert(_symbolTableShnDx.begin(), content.begin(), content.end());
-            break;
+            // If symbol st_shndx contains SHN_XINDEX, then the actual section header index is too large to fit in this field.
+            // The actual value is contained in the associated section of type SHT_SYMTAB_SHNDX.
+            _symbolTableShndxSectionIdx = static_cast<int64_t>(i);
         }
         default:
         {
+            auto is = new InputSection{ this, static_cast<uint32_t>(i) };
+            _inputSections[i] = is;
         }
         }
-        auto is = new InputSection{ this, static_cast<uint32_t>(i) };
-        _inputSections[i] = is;
+
     }
 }
 
-void ELF::ObjectFile::_InitializeSymbols()
+void rvld::ObjectFile::_InitializeSymbols()
 {
     auto ElfSymbols = ReadSymbolTable();
     if (ElfSymbols.empty())
@@ -350,70 +347,36 @@ void ELF::ObjectFile::_InitializeSymbols()
     }
 }
 
-int64_t ELF::ObjectFile::GetGlobalSymbolStartIndex()
+int64_t rvld::ObjectFile::GetGlobalSymbolStartIndex()
 {
     return _globalSymbolStartIndex;
 }
 
-ELF::InputSection* ELF::ObjectFile::_GetInputSection(ELF::Elf64_Sym symbol, size_t index)
+rvld::InputSection* rvld::ObjectFile::_GetInputSection(ELF::Elf64_Sym symbol, size_t index)
 {
-    if (symbol.NeedExtendSection())
-    {
-        spdlog::info("Need Extend Section");
-        auto idx = _symbolTableShnDx.ReadStruct<uint32_t>(index * 4);
-        return GetInputSections().at(idx);
-    }
-
-    return GetInputSections().at(symbol.st_shndx);
+    return GetInputSections().at(GetShnIndex(symbol, index));
 }
 
-std::vector<ELF::InputSection*> ELF::ObjectFile::GetInputSections()
+std::vector<rvld::InputSection*> rvld::ObjectFile::GetInputSections()
 {
     return _inputSections;
 }
 
-ELF::Symbol* ELF::ObjectFile::_MakeNewSymbol(ELF::Elf64_Sym eSym, size_t index)
-{
-    auto symbolName = ReadSymbolName(eSym);
-    auto symbol = new Symbol(symbolName, this, index);
-
-    if (eSym.IsAbsSymbol() || eSym.IsUndefinedSymbol())
-    {
-        return symbol;
-    }
-
-    auto section = _GetInputSection(eSym, index);
-    symbol->SetInputSection(section);
-    return symbol;
-}
-
-std::vector<ELF::Symbol*> ELF::ObjectFile::Symbols()
+std::vector<rvld::Symbol*> rvld::ObjectFile::Symbols()
 {
     return _symbols;
 }
 
-std::vector<ELF::Symbol*> ELF::ObjectFile::GetGlobalSymbols()
+std::vector<rvld::Symbol*> rvld::ObjectFile::GetGlobalSymbols()
 {
     std::vector<Symbol*> ret{};
 
     if (!HasGlobalSymbol())
     {
-//        spdlog::info("This object has no global symbol -> {}", GetName());
-//        spdlog::info("GetGlobal Symbol Index -> {}", GetGlobalSymbolStartIndex());
         return ret;
     }
 
     auto symbols = Symbols();
-
-//    if (GetGlobalSymbolStartIndex() >= symbols.size()) {
-//        spdlog::info("GetGlobalSymbolStartIndex() -> {}", GetGlobalSymbolStartIndex());
-//        spdlog::info("symbols.size() -> {}", symbols.size());
-//        spdlog::info("file -> {}", GetSourceFile()->GetName());
-//        if (GetSourceFile()->ParentFile()) {
-//            spdlog::info("file path -> {}", GetSourceFile()->ParentFile()->GetPath().c_str());
-//        }
-//    }
-
 
     assert(GetGlobalSymbolStartIndex() < static_cast<int64_t>(symbols.size()));
 
@@ -425,71 +388,192 @@ std::vector<ELF::Symbol*> ELF::ObjectFile::GetGlobalSymbols()
     return ret;
 }
 
-bool ELF::ObjectFile::HasGlobalSymbol()
+bool rvld::ObjectFile::HasGlobalSymbol()
 {
     auto index = GetGlobalSymbolStartIndex();
     return (index != -1) && (index < Symbols().size());
 }
 
-ELF::InputSection::InputSection(ObjectFile* file, uint32_t ndx) :
-    _objectFile(file), _sectionIndex(ndx)
+void rvld::ObjectFile::_InitializeMergeableSections()
 {
-    auto contentView = _objectFile->ReadSectionContent(ndx);
-    _content.insert(_content.begin(), contentView.begin(), contentView.end());
+    auto inputSections = GetInputSections();
+    _mergeableSections.resize(inputSections.size(), nullptr);
+
+    for (size_t i = 0; i < inputSections.size(); ++i)
+    {
+        auto isec = inputSections[i];
+//        if (isec != nullptr)
+//        {
+////            spdlog::info("Handle mergeable section -> {}", isec->SectionName());
+//            if (isec->SectionName() == ".srodata.cst4")
+//            {
+//                if (isec->IsMergeableSection()) {
+//                    spdlog::info(".srodata.cst4 section is mergeable");
+//                }
+//                if (isec->IsAlive())
+//                {
+//                    spdlog::info(".srodata.cst4 section is Alive");
+//                }
+//            }
+//        }
+        if (isec != nullptr && isec->IsMergeableSection())
+        {
+//            spdlog::info("Handle mergeable section -> {}", isec->SectionName());
+            _mergeableSections[i] = _SplitSection(isec);
+            isec->SetAliveStatus(false);
+        }
+    }
 }
 
-ELF::Elf64_Shdr ELF::InputSection::GetSectionHeader()
+size_t FindNull(Bytes& data, size_t entSize)
 {
-    if (GetSectionIndex() > GetSourceFile()->GetSectionHeaderCount())
+    Bytes zero{};
+    zero.resize(entSize, std::byte{ 0x00 });
+
+    if (entSize == 1)
     {
-        spdlog::error("Index Overflow");
+        auto it = std::find(data.begin(), data.end(), std::byte{ '\0' });
+        return std::distance(data.begin(), it);
     }
 
-    return _objectFile->GetSectionHeader(_sectionIndex);
+    for (size_t i = 0; i <= data.size() - entSize; i += entSize)
+    {
+        auto subData = data.SubBytes(i, i + entSize);
+        if (std::all_of(subData.begin(), subData.end(), [](std::byte item) { return item == std::byte{ 0x00 }; }))
+        {
+            return i;
+        }
+    }
+
+    return -1;
+};
+
+rvld::MergeableSection* rvld::ObjectFile::_SplitSection(InputSection* isec)
+{
+    auto ms = new MergeableSection{};
+    auto sHdr = isec->GetSectionHeader();
+
+    ms->P2Align = isec->P2Align();
+    ms->Name = isec->SectionName();
+    ms->Shdr = sHdr;
+
+    auto data = isec->Content();
+    assert(!data.empty());
+    uint64_t offset = 0;
+    if ((sHdr.sh_flags & SHF_STRINGS) != 0)
+    {
+        while (offset < data.size())
+        {
+            auto end = FindNull(data, sHdr.sh_entsize);
+            if (end == -1)
+            {
+                spdlog::error("-1 -> file name is {}, {}", this->GetSourceFile()->GetName(), isec->SectionName());
+            }
+
+            auto subData = data.SubBytes(0, end + sHdr.sh_entsize);
+            data = data.SubBytes(end + sHdr.sh_entsize);
+            ms->AppendData(subData);
+            ms->AppendOffset(offset);
+            offset += (end + sHdr.sh_entsize);
+        }
+//        spdlog::info("This file name is -> {}", GetSourceFile()->GetName());
+//        spdlog::info("SHF_STRINGS Generate Offsets -> {}", fmt::join(ms->GetOffsets(), ","));
+    }
+    else
+    {
+        auto entrySize = sHdr.sh_entsize;
+        assert((data.size() % sHdr.sh_entsize) == 0);
+        auto entryCount = data.size() / sHdr.sh_entsize;
+        for (auto i = 0; i < entryCount; i++)
+        {
+            auto subData = data.SubBytes(offset, offset + entrySize);
+            ms->AppendData(subData);
+            ms->AppendOffset(offset);
+            offset += entrySize;
+        }
+//        spdlog::info("This file name is -> {}", GetSourceFile()->GetName());
+//        spdlog::info("Common Generate Offsets -> {}", fmt::join(ms->GetOffsets(), ","));
+    }
+
+
+    return ms;
 }
 
-ELF::ObjectFile* ELF::InputSection::GetSourceFile()
+std::vector<rvld::MergeableSection*> rvld::ObjectFile::GetMergeableSections()
 {
-    return _objectFile;
+    return _mergeableSections;
 }
 
-size_t ELF::InputSection::GetSectionIndex() const
+void rvld::ObjectFile::RegisterSectionPieces()
 {
-    return _sectionIndex;
+    for (auto&& ms : GetMergeableSections())
+    {
+        if (ms == nullptr) {
+            continue ;
+        }
+
+        auto data = ms->GetData();
+        auto offsets = ms->GetOffsets();
+
+        assert(data.size() == offsets.size());
+
+        for (auto i = 0; i < data.size(); ++i)
+        {
+            auto byte = data[i];
+            auto offset = offsets[i];
+
+            ms->AppendFragments(ms->Parent->Insert(byte, ms->P2Align));
+        }
+    }
+
+    auto symbols = Symbols();
+    auto mergeableSections = GetMergeableSections();
+
+    for (auto i = 0; i < symbols.size(); ++i)
+    {
+        auto sym = symbols[i];
+        auto eSym = sym->ELFSymbol();
+
+        if (eSym.IsAbsSymbol() || eSym.IsUndefinedSymbol() || eSym.IsCommonSymbol())
+        {
+            continue;
+        }
+
+        auto ms = mergeableSections[GetShnIndex(eSym, i)];
+        if (ms == nullptr)
+        {
+            continue;
+        }
+
+        auto [frag, offset] = ms->GetSectionFragment(eSym.st_value);
+
+        assert(frag != nullptr);
+//
+        sym->SetSectionFragment(frag);
+        sym->SetValue(offset);
+    }
 }
 
-std::string ELF::InputSection::SectionName()
+uint32_t rvld::ObjectFile::GetShnIndex(ELF::Elf64_Sym elf64Sym, size_t index)
 {
-    auto file = GetSourceFile();
-    return file->ReadSectionName(GetSectionHeader());
+    if (elf64Sym.NeedExtendSection())
+    {
+        spdlog::info("Need Extend Section");
+        // Todo 可以優化
+        auto symbolTableShnSection = ReadSectionContent(_symbolTableShndxSectionIdx);
+        auto idx = Bytes{symbolTableShnSection}.ReadStruct<uint32_t>(index * 4);
+        return idx;
+    }
+
+    return elf64Sym.st_shndx;
 }
 
-ELF::Symbol::Symbol(std::string name, ELF::ObjectFile* source, size_t index) :
-    _name(std::move(name)), _sourceFile(source), _symIdx(index)
+void rvld::ObjectFile::AppendSymbol(rvld::Symbol* sym)
 {
-}
-void ELF::Symbol::SetInputSection(ELF::InputSection* sec)
-{
-    _inputSection = sec;
+    _symbols.push_back(sym);
 }
 
-ELF::Elf64_Sym ELF::Symbol::ELFSymbol()
+void rvld::ObjectFile::SetGlobalSymbolIndex(int64_t idx)
 {
-    auto file = SourceFile();
-    auto symbols = file->ReadSymbolTable();
-    return symbols.at(_symIdx);
-}
-ELF::ObjectFile* ELF::Symbol::SourceFile()
-{
-    return _sourceFile;
-}
-
-std::string ELF::Symbol::Name()
-{
-    return _name;
-}
-
-ELF::ObjectFile* ELF::Symbol::DefinitionFile()
-{
-    return _definitionFile;
+    _globalSymbolStartIndex = idx;
 }

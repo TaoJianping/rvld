@@ -5,6 +5,8 @@
 #ifndef RVLD_DEFINE_H
 #define RVLD_DEFINE_H
 
+#include "elf.h"
+
 
 enum class FileType : uint32_t
 {
@@ -20,6 +22,15 @@ enum class MachineType : uint8_t
     RISCV64,
 };
 
+enum class ChunkKind
+{
+    HEADER,
+    OUTPUT_SECTION,
+    SYNTHETIC
+};
+
+constexpr uint64_t IMAGE_BASE  = 0x200000;
+
 namespace ELF
 {
     using Elf64_Word = uint32_t;
@@ -30,6 +41,9 @@ namespace ELF
     using Elf32_Word = uint32_t;
     using Elf32_Half = uint16_t;
     using Elf32_Addr = uint32_t;
+
+    using Elf32_Off = uint32_t;
+    using Elf64_Off = uint64_t ;
 
     /**
      * Special section indices in the ELF format
@@ -48,6 +62,7 @@ namespace ELF
         XINDEX    = 0xffff,     // Index is in extra table
         HIRESERVE = 0xffff      // End of reserved indices
     };
+
 
     enum class STB : uint8_t
     {
@@ -155,6 +170,11 @@ namespace ELF
             return static_cast<ElfSpecialSectionIndex>(st_shndx) == ElfSpecialSectionIndex::UNDEFINED;
         }
 
+        [[nodiscard]] bool IsCommonSymbol() const
+        {
+            return static_cast<ElfSpecialSectionIndex>(st_shndx) == ElfSpecialSectionIndex::COMMON;
+        }
+
         [[nodiscard]] bool NeedExtendSection() const
         {
             return static_cast<ElfSpecialSectionIndex>(st_shndx) == ElfSpecialSectionIndex::XINDEX;
@@ -171,45 +191,70 @@ namespace ELF
         Elf32_Half st_shndx;
     };
 
+    struct Elf32_Phdr
+    {
+        Elf32_Word	p_type;			/* Segment type */
+        Elf32_Off	p_offset;		/* Segment file offset */
+        Elf32_Addr	p_vaddr;		/* Segment virtual address */
+        Elf32_Addr	p_paddr;		/* Segment physical address */
+        Elf32_Word	p_filesz;		/* Segment size in file */
+        Elf32_Word	p_memsz;		/* Segment size in memory */
+        Elf32_Word	p_flags;		/* Segment flags */
+        Elf32_Word	p_align;		/* Segment alignment */
+    } ;
+
+    struct Elf64_Phdr
+    {
+        Elf64_Word	p_type;			/* Segment type */
+        Elf64_Word	p_flags;		/* Segment flags */
+        Elf64_Off	p_offset;		/* Segment file offset */
+        Elf64_Addr	p_vaddr;		/* Segment virtual address */
+        Elf64_Addr	p_paddr;		/* Segment physical address */
+        Elf64_Xword	p_filesz;		/* Segment size in file */
+        Elf64_Xword	p_memsz;		/* Segment size in memory */
+        Elf64_Xword	p_align;		/* Segment alignment */
+    };
+
+
     enum class ElfSectionType : uint32_t
     {
-        SHT_NULL = 0, // 未使用的节
-        SHT_PROGBITS = 1, // 包含程序定义的信息（代码/数据）
-        SHT_SYMTAB = 2, // 符号表节
-        SHT_STRTAB = 3, // 字符串表节
-        SHT_RELA = 4, // 带有重定位入口的重定位节
-        SHT_HASH = 5, // 符号哈希表节
-        SHT_DYNAMIC = 6, // 动态信息节
-        SHT_NOTE = 7, // 说明信息
-        SHT_NOBITS = 8, // 不占空间，仅用于对齐的节
-        SHT_REL = 9, // 带有重定位入口的重定位节
-        SHT_SHLIB = 10, // 保留
-        SHT_DYNSYM = 11, // 动态链接符号表节
-        SHT_INIT_ARRAY = 14, // 初始化函数指针数组节
-        SHT_FINI_ARRAY = 15, // 结束函数指针数组节
-        SHT_PREINIT_ARRAY = 16, // 先于 INIT_ARRAY 的初始化函数指针数组节
-        SHT_GROUP = 17, // 组相关节
-        SHT_SYMTAB_SHNDX = 18, // 符号表的节索引节
-        SHT_NUM = 19, // 节数量
-        SHT_LOOS = 0x60000000, // 专用于该操作系统节类型的开始值
-        SHT_HIOS = 0x6fffffff, // 专用于该操作系统节类型的结束值
-        SHT_LOPROC = 0x70000000, // 专用于该处理器体系结构节类型的开始值
-        SHT_HIPROC = 0x7fffffff, // 专用于该处理器体系结构节类型的结束值
-        SHT_LOUSER = 0x80000000, // 专用于应用程序节类型的开始值
-        SHT_HIUSER = 0xffffffff // 专用于应用程序节类型的结束值
+        NULL_ = 0, // 未使用的节
+        PROGBITS = 1, // 包含程序定义的信息（代码/数据）
+        SYMTAB = 2, // 符号表节
+        STRTAB = 3, // 字符串表节
+        RELA = 4, // 带有重定位入口的重定位节
+        HASH = 5, // 符号哈希表节
+        DYNAMIC = 6, // 动态信息节
+        NOTE = 7, // 说明信息
+        NOBITS = 8, // 不占空间，仅用于对齐的节
+        REL = 9, // 带有重定位入口的重定位节
+        SHLIB = 10, // 保留
+        DYNSYM = 11, // 动态链接符号表节
+        INIT_ARRAY = 14, // 初始化函数指针数组节
+        FINI_ARRAY = 15, // 结束函数指针数组节
+        PREINIT_ARRAY = 16, // 先于 INIT_ARRAY 的初始化函数指针数组节
+        GROUP = 17, // 组相关节
+        SYMTAB_SHNDX = 18, // 符号表的节索引节
+        NUM = 19, // 节数量
+        LOOS = 0x60000000, // 专用于该操作系统节类型的开始值
+        HIOS = 0x6fffffff, // 专用于该操作系统节类型的结束值
+        LOPROC = 0x70000000, // 专用于该处理器体系结构节类型的开始值
+        HIPROC = 0x7fffffff, // 专用于该处理器体系结构节类型的结束值
+        LOUSER = 0x80000000, // 专用于应用程序节类型的开始值
+        HIUSER = 0xffffffff // 专用于应用程序节类型的结束值
     };
 
     enum class ElfType : uint16_t
     {
-        ET_NONE = 0, // No file type
-        ET_REL = 1, // Relocatable file
-        ET_EXEC = 2, // Executable file
-        ET_DYN = 3, // Shared object file
-        ET_CORE = 4, // Core file
-        ET_LOOS = 0xfe00, // Operating system-specific
-        ET_HIOS = 0xfeff, // Operating system-specific
-        ET_LOPROC = 0xff00, // Processor-specific
-        ET_HIPROC = 0xffff // Processor-specific
+        NONE = 0, // No file type
+        REL = 1, // Relocatable file
+        EXEC = 2, // Executable file
+        DYN = 3, // Shared object file
+        CORE = 4, // Core file
+        LOOS = 0xfe00, // Operating system-specific
+        HIOS = 0xfeff, // Operating system-specific
+        LOPROC = 0xff00, // Processor-specific
+        HIPROC = 0xffff // Processor-specific
     };
 
     enum class ELFMachine : uint16_t {
@@ -282,11 +327,14 @@ namespace ELF
         BerkeleyPacketFilter = 0xF7,
     };
 
-
+    using ELFHeader = Elf64_Ehdr;
+    using ELFSectionHeader = Elf64_Shdr;
+    using ELFProgramHeader = Elf64_Phdr;
 
     constexpr auto EHDR64_SIZE = sizeof(Elf64_Ehdr{});
     constexpr auto SHDR64_SIZE = sizeof(Elf64_Shdr{});
     constexpr auto Sym64_SIZE = sizeof(Elf64_Sym{});
+    constexpr auto PHDR64_SIZE = sizeof(Elf64_Phdr{});
 }
 
 #endif //RVLD_DEFINE_H

@@ -10,6 +10,8 @@ AlwaysBreakTemplateDeclarations: Yes
 BinPackArguments: false
 BinPackParameters: false
 BraceWrapping:
+  AfterClass: true
+  AfterFunction: true
   AfterCaseLabel: true
   AfterUnion: true
   AfterExternBlock: false

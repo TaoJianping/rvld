@@ -1,8 +1,7 @@
 #include "spdlog/spdlog.h"
 #include "rvld.h"
 #include "spdlog/sinks/basic_file_sink.h"
-
-
+#include "Utils/OutputFile.h"
 
 int main(int argc, char** argv)
 {
@@ -11,9 +10,9 @@ int main(int argc, char** argv)
     auto file_logger = spdlog::basic_logger_mt("basic_logger", log_path.c_str(), true);
     spdlog::set_default_logger(file_logger);
 
-    Linker linker{};
-    auto ctx = linker.NewContext();
-//        ctx->PrintArgs(argc, argv);
+    rvld::Linker ld{};
+    auto ctx = ld.GetContext();
+//    ctx->PrintArgs(argc, argv);
     ctx->ParseArgs(argc, argv);
 
     if (ctx->GetMachineType() == MachineType::None)
@@ -22,33 +21,42 @@ int main(int argc, char** argv)
         ctx->SetMachineType(MachineType::RISCV64);
     }
 
-    auto files = linker.ReadInputFiles(ctx);
+    auto files = ld.ReadInputFiles(ctx);
 
-//    spdlog::info("Start FillUp Objects");
-    ctx->FillUpObjects(files);
-
-    auto objs = ctx->GetObjectFiles();
-
-//    for (auto obj : objs)
-//    {
-//        if (!obj->HasSymbolSection()) {
-//            spdlog::info("This file has no symbol section -> {}",  obj->GetName());
-//        }
-//
-//        if (obj->GetSourceFile()->Alive())
-//        {
-//            spdlog::info("Alive File -> {}",  obj->GetName());
-//        }
-//    }
-
+    auto fileNumber = ctx->FillUpObjects(files);
     ctx->ResolveSymbols();
 //    ctx->PrintResolveSymbolMap();
-
     ctx->MarkLiveObjects();
+    ctx->GenerateMergedSection();
+    ctx->ClearUnusedObjectsAndSymbols();
+//    ctx->PrintMergedSections();
+    ctx->RegisterSectionPieces();
+    ctx->CreateSyntheticSections();
 
-    spdlog::info("live objects size -> {}", ctx->GetLiveObjectFiles().size());
+    // link the alive input sections to output sections
+    ctx->LinkInputSectionToOutputSection();
+    ctx->CollectOutputSections();
 
+    ctx->ComputeSectionSizes();
+    ctx->ComputeSectionHeaders();
 
+    for (auto chunk : ctx->GetChunks())
+    {
+        chunk->UpdateShdr(*ctx);
+    }
 
+    auto fileSize = ctx->SetOutputSectionsOffset();
+    spdlog::info("File Size -> {}", fileSize);
+//    ctx->BufferRef()->ReSize(fileSize);
+    ctx->BufferRef()->ReSize(fileSize);
+
+    auto outputFile = OutputFile{ctx->Args.Output};
+
+    for (auto chunk : ctx->GetChunks())
+    {
+        chunk->CopyBuf(*ctx);
+    }
+
+    outputFile.WriteBytes(*ctx->BufferRef());
     return 0;
 }

@@ -4,9 +4,9 @@
 #include <filesystem>
 #include "gtest/gtest.h"
 #include "Define.h"
-#include "InputFile.h"
-#include "ELFFile.h"
+#include "Utils/InputFile.h"
 #include "spdlog/spdlog.h"
+#include "rvld.h"
 
 
 TEST(TestObjectFile, test_1)
@@ -24,7 +24,7 @@ TEST(TestObjectFile, test_GetMachineType)
     EXPECT_EQ(file.Exists(), true);
     EXPECT_EQ(FileType::ELF, file.GetFileType());
 
-    auto obj = ELF::ObjectFile{&file};
+    auto obj = rvld::ObjectFile{&file};
 
     auto type = obj.GetMachineType();
     EXPECT_EQ(type, MachineType::RISCV64);
@@ -37,7 +37,7 @@ TEST(TestObjectFile, test_Symbols)
     EXPECT_EQ(file.Exists(), true);
     EXPECT_EQ(FileType::ELF, file.GetFileType());
 
-    auto obj = ELF::ObjectFile{&file};
+    auto obj = rvld::ObjectFile{&file};
     EXPECT_TRUE(obj.ReadSymbolTable().size() == obj.Symbols().size());
     if (obj.ReadSymbolTable().size() != obj.Symbols().size())
     {

@@ -1,17 +1,22 @@
+//
+// Created by tjp56 on 2023/6/20.
+//
+
 #include <iostream>
 #include <utility>
 #include "rvld.h"
-#include "Archive.h"
+#include "Utils/Archive.h"
 
 namespace fs = std::filesystem;
 
-InputFile* Linker::NewInputFile(fs::path path)
+
+InputFile* rvld::Linker::NewInputFile(fs::path path)
 {
     auto elfFile = new InputFile{ std::move(path) };
     return elfFile;
 }
 
-InputFile* Linker::NewInputFile(const std::string& path)
+InputFile* rvld::Linker::NewInputFile(const std::string& path)
 {
     fs::path filePath = path;
 
@@ -24,16 +29,16 @@ InputFile* Linker::NewInputFile(const std::string& path)
     return new InputFile{ filePath };
 }
 
-ELF::ObjectFile* Linker::NewObjectFile(InputFile* localFile)
+rvld::ObjectFile* rvld::Linker::NewObjectFile(InputFile* localFile)
 {
     if (!CheckFileCompatibility(GetContext(), localFile)) {
         spdlog::error("incompatible file type");
     }
-    auto objFile = new ELF::ObjectFile{ localFile };
+    auto objFile = new rvld::ObjectFile{ localFile };
     return objFile;
 }
 
-Context* Linker::NewContext()
+rvld::Context* rvld::Linker::NewContext()
 {
     auto ctx = new Context{};
     return ctx;
@@ -42,7 +47,7 @@ Context* Linker::NewContext()
 /*
  * 把传入的文件都给读取出来
  * */
-std::vector<InputFile*> Linker::ReadInputFiles(Context* ctx)
+std::vector<InputFile*> rvld::Linker::ReadInputFiles(Context* ctx)
 {
     std::vector<InputFile*> passedFiles{};
 
@@ -67,7 +72,7 @@ std::vector<InputFile*> Linker::ReadInputFiles(Context* ctx)
     return passedFiles;
 }
 
-InputFile* Linker:: FindLibrary(Context* ctx, const std::string& lib)
+InputFile* rvld::Linker:: FindLibrary(Context* ctx, const std::string& lib)
 {
     std::string libName = "lib" + lib + ".a";
     for (auto& libPath : ctx->Args.LibraryPaths)
@@ -84,7 +89,7 @@ InputFile* Linker:: FindLibrary(Context* ctx, const std::string& lib)
     return nullptr;
 }
 
-bool Linker::FillUpObjects(Context* ctx, std::vector<InputFile*> files)
+bool rvld::Linker::FillUpObjects(Context* ctx, std::vector<InputFile*> files)
 {
     for (auto& file : files)
     {
@@ -94,13 +99,13 @@ bool Linker::FillUpObjects(Context* ctx, std::vector<InputFile*> files)
             auto members = af.ReadArchiveMembers();
             for (auto f : members)
             {
-                if (file->IsElfFile() && file->GetElfFileType() == ELF::ElfType::ET_REL)
+                if (file->IsElfFile() && file->GetElfFileType() == ELF::ElfType::REL)
                 {
                     ctx->AppendObjects(NewObjectFile(f));
                 }
             }
         }
-        else if (file->IsElfFile() && file->GetElfFileType() == ELF::ElfType::ET_REL)
+        else if (file->IsElfFile() && file->GetElfFileType() == ELF::ElfType::REL)
         {
             ctx->AppendObjects(NewObjectFile(file));
         }
@@ -114,27 +119,28 @@ bool Linker::FillUpObjects(Context* ctx, std::vector<InputFile*> files)
     return true;
 }
 
-bool Linker::CheckFileCompatibility(Context* ctx, InputFile* inputFile)
+bool rvld::Linker::CheckFileCompatibility(Context* ctx, InputFile* inputFile)
 {
     auto ft = inputFile->GetFileType();
-    if (ft == FileType::ELF && inputFile->GetElfFileType() == ELF::ElfType::ET_REL)
+    if (ft == FileType::ELF && inputFile->GetElfFileType() == ELF::ElfType::REL)
     {
-        ELF::ObjectFile obj{inputFile};
+        rvld::ObjectFile obj{inputFile};
         return obj.GetMachineType() == ctx->Args.Emulation;
     }
 
     return false;
 }
-void Linker::SetDefaultContext(Context* ctx)
+void rvld::Linker::SetDefaultContext(Context* ctx)
 {
     _defaultContext = ctx;
 }
 
-Context* Linker::GetContext()
+rvld::Context* rvld::Linker::GetContext()
 {
     return _defaultContext;
 }
-Linker::Linker()
+
+rvld::Linker::Linker()
 {
     SetDefaultContext(new Context{});
 }

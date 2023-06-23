@@ -10,8 +10,8 @@
 
 #include "spdlog/spdlog.h"
 
-#include "Define.h"
-#include "Utils/Bytes.h"
+#include "../Define.h"
+#include "Bytes.h"
 
 namespace fs = std::filesystem;
 
