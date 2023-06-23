@@ -28,13 +28,13 @@ int main(int argc, char** argv)
 //    ctx->PrintResolveSymbolMap();
     ctx->MarkLiveObjects();
     ctx->GenerateMergedSection();
+    // link the alive input sections to output sections
+    ctx->LinkInputSectionToOutputSection();
     ctx->ClearUnusedObjectsAndSymbols();
 //    ctx->PrintMergedSections();
     ctx->RegisterSectionPieces();
     ctx->CreateSyntheticSections();
 
-    // link the alive input sections to output sections
-    ctx->LinkInputSectionToOutputSection();
     ctx->CollectOutputSections();
 
     ctx->ComputeSectionSizes();

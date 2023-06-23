@@ -386,7 +386,7 @@ void rvld::Context::LinkInputSectionToOutputSection()
             auto o = GetOutputSection(isec->SectionName(), isec->GetSectionHeader().sh_type, isec->GetSectionHeader().sh_flags);
             assert(o != nullptr);
             isec->LinkOutputSection(o);
-            if (isec->IsAlive())
+            if (isec->IsAlive() && isec->GetSourceFile()->GetSourceFile()->Alive())
             {
                 o->AppendInputSection(isec);
             }
