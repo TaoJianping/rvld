@@ -4,8 +4,8 @@
 
 #include "gtest/gtest.h"
 #include <filesystem>
-#include "Utils/Bytes.h"
-#include "Utils/Utils.h"
+#include "utils/Bytes.h"
+#include "utils/Utils.h"
 
 TEST(TestUtils, test_bytes)
 {

@@ -5,7 +5,7 @@
 #include "gtest/gtest.h"
 #include "Define.h"
 #include "rvld.h"
-#include "Utils/InputFile.h"
+#include "utils/InputFile.h"
 #include "spdlog/spdlog.h"
 
 TEST(TestLinker, test_CheckFileCompatibility)

@@ -7,6 +7,7 @@
 
 #include "elf.h"
 
+constexpr uint64_t IMAGE_BASE  = 0x200000;
 
 enum class FileType : uint32_t
 {
@@ -28,8 +29,6 @@ enum class ChunkKind
     OUTPUT_SECTION,
     SYNTHETIC
 };
-
-constexpr uint64_t IMAGE_BASE  = 0x200000;
 
 namespace ELF
 {
@@ -125,6 +124,30 @@ namespace ELF
         uint32_t sh_info;
         uint64_t sh_addralign;
         uint64_t sh_entsize;
+
+        [[nodiscard]] bool IsNoteSection() const {
+            return sh_type == SHT_NOTE;
+        };
+
+        [[nodiscard]] bool IsAllocSection() const {
+            return (sh_flags & SHF_ALLOC) != 0;
+        };
+
+        [[nodiscard]] bool IsTbss() const {
+            return sh_type == static_cast<uint32_t>(SHT_NOBITS) && (sh_flags & static_cast<uint64_t>(SHF_TLS)) != 0;;
+        };
+
+        [[nodiscard]] bool IsTls() const {
+            return (sh_flags & SHF_TLS) != 0;
+        }
+
+        [[nodiscard]] bool IsBss() const {
+            return (sh_type == SHT_NOBITS) && !IsTls();
+        }
+
+        [[nodiscard]] bool IsNote() const {
+            return (sh_type == SHT_NOTE) && ((sh_flags & SHF_ALLOC) != 0);
+        }
     };
 
     struct Elf32_Shdr

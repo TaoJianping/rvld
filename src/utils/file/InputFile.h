@@ -1,17 +1,11 @@
 #pragma once
 
-#include <algorithm>
-#include <cstdint>
-#include <fstream>
 #include <filesystem>
-#include <vector>
-#include <array>
-#include <gsl/span>
-
-#include "spdlog/spdlog.h"
+#include <span>
 
 #include "../Define.h"
 #include "Bytes.h"
+#include "spdlog/spdlog.h"
 
 namespace fs = std::filesystem;
 
@@ -37,6 +31,7 @@ public:
     [[nodiscard]] bool Alive() const;
     void SetAlive();
     InputFile* ParentFile();
+    ELF::Elf64_Ehdr ElfHeader();
 
     fs::path GetPath();
 

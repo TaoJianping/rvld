@@ -402,20 +402,6 @@ void rvld::ObjectFile::_InitializeMergeableSections()
     for (size_t i = 0; i < inputSections.size(); ++i)
     {
         auto isec = inputSections[i];
-//        if (isec != nullptr)
-//        {
-////            spdlog::info("Handle mergeable section -> {}", isec->SectionName());
-//            if (isec->SectionName() == ".srodata.cst4")
-//            {
-//                if (isec->IsMergeableSection()) {
-//                    spdlog::info(".srodata.cst4 section is mergeable");
-//                }
-//                if (isec->IsAlive())
-//                {
-//                    spdlog::info(".srodata.cst4 section is Alive");
-//                }
-//            }
-//        }
         if (isec != nullptr && isec->IsMergeableSection())
         {
 //            spdlog::info("Handle mergeable section -> {}", isec->SectionName());
@@ -571,9 +557,4 @@ uint32_t rvld::ObjectFile::GetShnIndex(ELF::Elf64_Sym elf64Sym, size_t index)
 void rvld::ObjectFile::AppendSymbol(rvld::Symbol* sym)
 {
     _symbols.push_back(sym);
-}
-
-void rvld::ObjectFile::SetGlobalSymbolIndex(int64_t idx)
-{
-    _globalSymbolStartIndex = idx;
 }

@@ -1,26 +1,206 @@
 [
 {
-  "directory": "/home/tao/projects/xmake_projects/rvld",
-  "arguments": ["/usr/local/bin/clang", "-c", "-Qunused-arguments", "-m64", "-g", "-O0", "-std=c++2b", "-I", "/home/tao/.xmake/packages/g/glog/v0.6.0/98bb9424878c424382eb29e8237853f9/include", "-I", "/home/tao/.xmake/packages/g/gflags/v2.2.2/0f545414272c459b907061d5e923ed20/include", "-o", "build/.objs/rvld/linux/x86_64/debug/src/ObjectFile.cpp.o", "src/ObjectFile.cpp"],
-  "file": "src/ObjectFile.cpp"
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/rvld/linux/x86_64/debug/src/MergedSection.cpp.o", "src/MergedSection.cpp"],
+  "file": "src/MergedSection.cpp"
 },
 {
-  "directory": "/home/tao/projects/xmake_projects/rvld",
-  "arguments": ["/usr/local/bin/clang", "-c", "-Qunused-arguments", "-m64", "-g", "-O0", "-std=c++2b", "-I", "/home/tao/.xmake/packages/g/glog/v0.6.0/98bb9424878c424382eb29e8237853f9/include", "-I", "/home/tao/.xmake/packages/g/gflags/v2.2.2/0f545414272c459b907061d5e923ed20/include", "-o", "build/.objs/rvld/linux/x86_64/debug/src/InputFile.cpp.o", "src/InputFile.cpp"],
-  "file": "src/InputFile.cpp"
-},
-{
-  "directory": "/home/tao/projects/xmake_projects/rvld",
-  "arguments": ["/usr/local/bin/clang", "-c", "-Qunused-arguments", "-m64", "-g", "-O0", "-std=c++2b", "-I", "/home/tao/.xmake/packages/g/glog/v0.6.0/98bb9424878c424382eb29e8237853f9/include", "-I", "/home/tao/.xmake/packages/g/gflags/v2.2.2/0f545414272c459b907061d5e923ed20/include", "-o", "build/.objs/rvld/linux/x86_64/debug/src/main.cpp.o", "src/main.cpp"],
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/rvld/linux/x86_64/debug/src/main.cpp.o", "src/main.cpp"],
   "file": "src/main.cpp"
 },
 {
-  "directory": "/home/tao/projects/xmake_projects/rvld",
-  "arguments": ["/usr/local/bin/clang", "-c", "-Qunused-arguments", "-m64", "-g", "-O0", "-std=c++2b", "-I", "/home/tao/.xmake/packages/g/glog/v0.6.0/98bb9424878c424382eb29e8237853f9/include", "-I", "/home/tao/.xmake/packages/g/gflags/v2.2.2/0f545414272c459b907061d5e923ed20/include", "-o", "build/.objs/rvld/linux/x86_64/debug/src/ELFFile.cpp.o", "src/ELFFile.cpp"],
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/rvld/linux/x86_64/debug/src/OutputEhdr.cpp.o", "src/OutputEhdr.cpp"],
+  "file": "src/OutputEhdr.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/rvld/linux/x86_64/debug/src/InputSection.cpp.o", "src/InputSection.cpp"],
+  "file": "src/InputSection.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/rvld/linux/x86_64/debug/src/Linker.cpp.o", "src/Linker.cpp"],
+  "file": "src/Linker.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/rvld/linux/x86_64/debug/src/OutputSHdr.cpp.o", "src/OutputSHdr.cpp"],
+  "file": "src/OutputSHdr.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/rvld/linux/x86_64/debug/src/MergeableSection.cpp.o", "src/MergeableSection.cpp"],
+  "file": "src/MergeableSection.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/rvld/linux/x86_64/debug/src/OutputPhdr.cpp.o", "src/OutputPhdr.cpp"],
+  "file": "src/OutputPhdr.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/rvld/linux/x86_64/debug/src/Context.cpp.o", "src/Context.cpp"],
+  "file": "src/Context.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/rvld/linux/x86_64/debug/src/OutputSection.cpp.o", "src/OutputSection.cpp"],
+  "file": "src/OutputSection.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/rvld/linux/x86_64/debug/src/Chunk.cpp.o", "src/Chunk.cpp"],
+  "file": "src/Chunk.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/rvld/linux/x86_64/debug/src/ELFFile.cpp.o", "src/ELFFile.cpp"],
   "file": "src/ELFFile.cpp"
 },
 {
-  "directory": "/home/tao/projects/xmake_projects/rvld",
-  "arguments": ["/usr/local/bin/clang", "-c", "-Qunused-arguments", "-m64", "-g", "-O0", "-std=c++2b", "-I", "/home/tao/.xmake/packages/g/glog/v0.6.0/98bb9424878c424382eb29e8237853f9/include", "-I", "/home/tao/.xmake/packages/g/gflags/v2.2.2/0f545414272c459b907061d5e923ed20/include", "-o", "build/.objs/rvld/linux/x86_64/debug/src/rvld.cpp.o", "src/rvld.cpp"],
-  "file": "src/rvld.cpp"
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/rvld/linux/x86_64/debug/src/Symbol.cpp.o", "src/Symbol.cpp"],
+  "file": "src/Symbol.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/rvld/linux/x86_64/debug/src/Utils/BytesReader.cpp.o", "src/Utils/BytesReader.cpp"],
+  "file": "src/Utils/BytesReader.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/rvld/linux/x86_64/debug/src/Utils/Bytes.cpp.o", "src/Utils/Bytes.cpp"],
+  "file": "src/Utils/Bytes.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/rvld/linux/x86_64/debug/src/Utils/InputFile.cpp.o", "src/Utils/InputFile.cpp"],
+  "file": "src/Utils/InputFile.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/rvld/linux/x86_64/debug/src/Utils/Archive.cpp.o", "src/Utils/Archive.cpp"],
+  "file": "src/Utils/Archive.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/rvld/linux/x86_64/debug/src/Utils/OutputFile.cpp.o", "src/Utils/OutputFile.cpp"],
+  "file": "src/Utils/OutputFile.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-Isrc", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/g/gtest/v1.14.0/1396d24d20ce4a17a0d869a0dd56d9ba/include", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/test_main/linux/x86_64/debug/src/MergedSection.cpp.o", "src/MergedSection.cpp"],
+  "file": "src/MergedSection.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-Isrc", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/g/gtest/v1.14.0/1396d24d20ce4a17a0d869a0dd56d9ba/include", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/test_main/linux/x86_64/debug/src/OutputEhdr.cpp.o", "src/OutputEhdr.cpp"],
+  "file": "src/OutputEhdr.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-Isrc", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/g/gtest/v1.14.0/1396d24d20ce4a17a0d869a0dd56d9ba/include", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/test_main/linux/x86_64/debug/src/InputSection.cpp.o", "src/InputSection.cpp"],
+  "file": "src/InputSection.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-Isrc", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/g/gtest/v1.14.0/1396d24d20ce4a17a0d869a0dd56d9ba/include", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/test_main/linux/x86_64/debug/src/Linker.cpp.o", "src/Linker.cpp"],
+  "file": "src/Linker.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-Isrc", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/g/gtest/v1.14.0/1396d24d20ce4a17a0d869a0dd56d9ba/include", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/test_main/linux/x86_64/debug/src/OutputSHdr.cpp.o", "src/OutputSHdr.cpp"],
+  "file": "src/OutputSHdr.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-Isrc", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/g/gtest/v1.14.0/1396d24d20ce4a17a0d869a0dd56d9ba/include", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/test_main/linux/x86_64/debug/src/MergeableSection.cpp.o", "src/MergeableSection.cpp"],
+  "file": "src/MergeableSection.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-Isrc", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/g/gtest/v1.14.0/1396d24d20ce4a17a0d869a0dd56d9ba/include", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/test_main/linux/x86_64/debug/src/OutputPhdr.cpp.o", "src/OutputPhdr.cpp"],
+  "file": "src/OutputPhdr.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-Isrc", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/g/gtest/v1.14.0/1396d24d20ce4a17a0d869a0dd56d9ba/include", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/test_main/linux/x86_64/debug/src/Context.cpp.o", "src/Context.cpp"],
+  "file": "src/Context.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-Isrc", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/g/gtest/v1.14.0/1396d24d20ce4a17a0d869a0dd56d9ba/include", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/test_main/linux/x86_64/debug/src/OutputSection.cpp.o", "src/OutputSection.cpp"],
+  "file": "src/OutputSection.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-Isrc", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/g/gtest/v1.14.0/1396d24d20ce4a17a0d869a0dd56d9ba/include", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/test_main/linux/x86_64/debug/src/Chunk.cpp.o", "src/Chunk.cpp"],
+  "file": "src/Chunk.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-Isrc", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/g/gtest/v1.14.0/1396d24d20ce4a17a0d869a0dd56d9ba/include", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/test_main/linux/x86_64/debug/src/ELFFile.cpp.o", "src/ELFFile.cpp"],
+  "file": "src/ELFFile.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-Isrc", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/g/gtest/v1.14.0/1396d24d20ce4a17a0d869a0dd56d9ba/include", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/test_main/linux/x86_64/debug/src/Symbol.cpp.o", "src/Symbol.cpp"],
+  "file": "src/Symbol.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-Isrc", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/g/gtest/v1.14.0/1396d24d20ce4a17a0d869a0dd56d9ba/include", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/test_main/linux/x86_64/debug/src/Utils/BytesReader.cpp.o", "src/Utils/BytesReader.cpp"],
+  "file": "src/Utils/BytesReader.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-Isrc", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/g/gtest/v1.14.0/1396d24d20ce4a17a0d869a0dd56d9ba/include", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/test_main/linux/x86_64/debug/src/Utils/Bytes.cpp.o", "src/Utils/Bytes.cpp"],
+  "file": "src/Utils/Bytes.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-Isrc", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/g/gtest/v1.14.0/1396d24d20ce4a17a0d869a0dd56d9ba/include", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/test_main/linux/x86_64/debug/src/Utils/InputFile.cpp.o", "src/Utils/InputFile.cpp"],
+  "file": "src/Utils/InputFile.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-Isrc", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/g/gtest/v1.14.0/1396d24d20ce4a17a0d869a0dd56d9ba/include", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/test_main/linux/x86_64/debug/src/Utils/Archive.cpp.o", "src/Utils/Archive.cpp"],
+  "file": "src/Utils/Archive.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-Isrc", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/g/gtest/v1.14.0/1396d24d20ce4a17a0d869a0dd56d9ba/include", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/test_main/linux/x86_64/debug/src/Utils/OutputFile.cpp.o", "src/Utils/OutputFile.cpp"],
+  "file": "src/Utils/OutputFile.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-Isrc", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/g/gtest/v1.14.0/1396d24d20ce4a17a0d869a0dd56d9ba/include", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/test_main/linux/x86_64/debug/tests/TestUtils.cpp.o", "tests/TestUtils.cpp"],
+  "file": "tests/TestUtils.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-Isrc", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/g/gtest/v1.14.0/1396d24d20ce4a17a0d869a0dd56d9ba/include", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/test_main/linux/x86_64/debug/tests/TestInputFile.cpp.o", "tests/TestInputFile.cpp"],
+  "file": "tests/TestInputFile.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-Isrc", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/g/gtest/v1.14.0/1396d24d20ce4a17a0d869a0dd56d9ba/include", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/test_main/linux/x86_64/debug/tests/TestMain.cpp.o", "tests/TestMain.cpp"],
+  "file": "tests/TestMain.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-Isrc", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/g/gtest/v1.14.0/1396d24d20ce4a17a0d869a0dd56d9ba/include", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/test_main/linux/x86_64/debug/tests/TestObjectFile.cpp.o", "tests/TestObjectFile.cpp"],
+  "file": "tests/TestObjectFile.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-Isrc", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/g/gtest/v1.14.0/1396d24d20ce4a17a0d869a0dd56d9ba/include", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/test_main/linux/x86_64/debug/tests/TestLinker.cpp.o", "tests/TestLinker.cpp"],
+  "file": "tests/TestLinker.cpp"
+},
+{
+  "directory": "/home/tao/projects/rvld",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++23", "-Isrc", "-DPROJECT_DIR=\"/home/tao/projects/rvld\"", "-isystem", "/home/tao/.xmake/packages/g/gtest/v1.14.0/1396d24d20ce4a17a0d869a0dd56d9ba/include", "-isystem", "/home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include", "-isystem", "/home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include", "-isystem", "/home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include", "-o", "build/.objs/test_main/linux/x86_64/debug/tests/TestOutputFile.cpp.o", "tests/TestOutputFile.cpp"],
+  "file": "tests/TestOutputFile.cpp"
 }]

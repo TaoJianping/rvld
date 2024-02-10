@@ -5,11 +5,8 @@
 #ifndef RVLD_OUTPUTFILE_H
 #define RVLD_OUTPUTFILE_H
 
-#include <string>
 #include <filesystem>
 #include "Bytes.h"
-#include <fstream>
-#include "spdlog/spdlog.h"
 
 
 class OutputFile

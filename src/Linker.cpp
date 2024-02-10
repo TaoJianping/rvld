@@ -5,7 +5,7 @@
 #include <iostream>
 #include <utility>
 #include "rvld.h"
-#include "Utils/Archive.h"
+#include "file/Archive.h"
 
 namespace fs = std::filesystem;
 
@@ -135,7 +135,7 @@ void rvld::Linker::SetDefaultContext(Context* ctx)
     _defaultContext = ctx;
 }
 
-rvld::Context* rvld::Linker::GetContext()
+rvld::Context* rvld::Linker::GetContext() const
 {
     return _defaultContext;
 }

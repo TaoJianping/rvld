@@ -4,7 +4,7 @@
 
 #include "gtest/gtest.h"
 #include <filesystem>
-#include "Utils/InputFile.h"
+#include "utils/InputFile.h"
 #include "rvld.h"
 
 TEST(TestOutputFile, test_basic)

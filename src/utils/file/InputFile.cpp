@@ -1,5 +1,6 @@
 #include "InputFile.h"
 
+#include <fstream>
 #include <utility>
 
 InputFile::InputFile(const fs::path& p) :
@@ -129,7 +130,8 @@ bool InputFile::IsArchiveFile()
 
     return GetFileType() == FileType::Archive;
 }
-gsl::span<std::byte> InputFile::GetContentView()
+
+std::span<std::byte> InputFile::GetContentView()
 {
     return {_contents.data(), _contents.size()};
 }
@@ -143,11 +145,20 @@ fs::path InputFile::GetPath()
 {
     return _filePath;
 }
+
 void InputFile::SetAlive()
 {
     _isAlive = true;
 }
+
 InputFile* InputFile::ParentFile()
 {
     return _parent;
+}
+
+ELF::Elf64_Ehdr InputFile::ElfHeader()
+{
+    auto ehdr = ELF::Elf64_Ehdr{};
+    std::memcpy(&ehdr, _contents.data(), sizeof(ehdr));
+    return ehdr;
 }

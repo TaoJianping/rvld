@@ -2,9 +2,9 @@
 #include <filesystem>
 #include "gtest/gtest.h"
 #include "Define.h"
-#include "Utils/InputFile.h"
-#include "Utils/Archive.h"
-#include "Utils/BytesReader.h"
+#include "utils/InputFile.h"
+#include "utils/Archive.h"
+#include "utils/BytesReader.h"
 
 TEST(TestInputFile, test_elf_file)
 {

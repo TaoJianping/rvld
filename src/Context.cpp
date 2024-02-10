@@ -7,8 +7,8 @@
 #include <utility>
 #include <boost/program_options.hpp>
 
-#include "Utils/Archive.h"
-#include "Utils/Utils.h"
+#include "utils/file/Archive.h"
+#include "utils/Utils.h"
 #include "Define.h"
 #include "rvld.h"
 
@@ -308,8 +308,10 @@ void rvld::Context::CreateSyntheticSections()
 {
     _ehdr = new OutputEHdr{};
     _shdr = new OutputSHdr{};
+    _phdr = new OutputPHdr{};
 
     AppendChunks(_ehdr);
+    AppendChunks(_phdr);
     AppendChunks(_shdr);
 }
 
@@ -332,17 +334,46 @@ void rvld::Context::AppendChunks(Chunk* c)
 
 uint64_t rvld::Context::SetOutputSectionsOffset()
 {
-
-    uint64_t fileoff = 0;
-    auto chunks = GetChunks();
-    for (const auto & c : chunks)
+    // 先设置 addr
+    uint64_t addr = IMAGE_BASE;
+    for (auto chunk : GetChunks())
     {
-        fileoff = Utils::AlignTo(fileoff, c->GetSHdr()->sh_addralign);
-        c->GetSHdr()->sh_offset = fileoff;
-        fileoff += c->GetSHdr()->sh_size;
+        auto shdr = chunk->GetSHdr();
+        if (!shdr->IsAllocSection()) {
+            continue ;
+        }
+        shdr->sh_addr = Utils::AlignTo(addr, shdr->sh_addralign);
+        if (!shdr->IsTbss()) {
+            addr += shdr->sh_size;
+        }
     }
 
-    return fileoff;
+
+
+    auto chunks = GetChunks();
+    auto first = chunks.at(0);
+
+    size_t i = 0;
+    for (; i < chunks.size(); i++)
+    {
+        chunks.at(i)->GetSHdr()->sh_offset = chunks.at(i)->GetSHdr()->sh_addr - first->GetSHdr()->sh_addr;
+        if (!chunks.at(i)->GetSHdr()->IsAllocSection()) {
+            break ;
+        }
+    }
+
+    auto allocLast = chunks.at(i - 1);
+    uint64_t fileOff = allocLast->GetSHdr()->sh_offset + allocLast->GetSHdr()->sh_size;
+
+    for (; i < chunks.size(); i++)
+    {
+        auto shdr = chunks.at(i)->GetSHdr();
+        fileOff = Utils::AlignTo(fileOff, shdr->sh_addralign);
+        shdr->sh_offset = fileOff;
+        fileOff += shdr->sh_size;
+    }
+
+    return fileOff;
 }
 
 std::vector<rvld::Chunk*> rvld::Context::GetChunks()
@@ -403,6 +434,14 @@ void rvld::Context::CollectOutputSections()
         if (osec->MembersCount() > 0)
         {
             _chunks.push_back(osec);
+        }
+    }
+
+    for (auto ms : _mergedSections)
+    {
+        if (ms->GetSHdr()->sh_size > 0)
+        {
+            _chunks.push_back(ms);
         }
     }
 }
@@ -469,4 +508,76 @@ void rvld::Context::ClearUnusedObjectsAndSymbols()
     });
 
     _objects.erase(pos, _objects.end());
+}
+
+rvld::OutputSHdr* rvld::Context::SectionHeaderTable()
+{
+    return _shdr;
+}
+
+rvld::OutputPHdr* rvld::Context::ProgramHeaderTable()
+{
+    return _phdr;
+}
+
+std::vector<rvld::OutputSection*> rvld::Context::OutputSections()
+{
+    return _outputSections;
+}
+
+void rvld::Context::SortOutputSections()
+{
+    auto rank = [this](Chunk* chunk) -> uint32_t {
+        auto shdr = chunk->GetSHdr();
+        auto flags = chunk->GetSHdr()->sh_flags;
+        auto type = chunk->GetSHdr()->sh_type;
+
+        if (chunk == this->_ehdr)
+        {
+            return std::numeric_limits<uint32_t>::min();
+        }
+
+        if (chunk == this->_phdr)
+        {
+            return std::numeric_limits<uint32_t>::min() + 1;
+        }
+
+        if (shdr->IsNoteSection())
+        {
+            return std::numeric_limits<uint32_t>::min() + 2;
+        }
+
+        if (!shdr->IsAllocSection())
+        {
+            return std::numeric_limits<uint32_t>::max() - 1;
+        }
+
+        if (chunk == this->_shdr)
+        {
+            return std::numeric_limits<uint32_t>::max();
+        }
+
+        auto b2i = [](bool b) {
+            return b ? 1 : 0;
+        };
+
+        bool writeable = b2i((flags & static_cast<uint64_t>(SHF_WRITE)) != 0);
+        bool notExec = b2i((flags & static_cast<uint64_t>(SHF_EXECINSTR)) == 0);
+        bool notTls = b2i((flags & static_cast<uint64_t>(SHF_TLS)) == 0);
+        bool isBss = b2i(type == static_cast<uint32_t>(SHT_NOBITS));
+
+        return static_cast<int32_t>((writeable << 7) | (notExec << 6) | (notTls << 5) | (isBss << 4));
+    };
+
+    std::sort(_chunks.begin(), _chunks.end(), [rank](auto a, auto b) -> bool {
+        return rank(a) < rank(b);
+    });
+}
+
+void rvld::Context::ComputeMergedSectionSize()
+{
+    for (auto ms : _mergedSections)
+    {
+        ms->AssignOffsets();
+    }
 }

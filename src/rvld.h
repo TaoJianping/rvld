@@ -9,8 +9,8 @@
 #include <map>
 #include <spdlog/spdlog.h>
 
-#include "Utils/strutil.h"
-#include "Utils/InputFile.h"
+#include "utils/string/strutil.h"
+#include "utils/file/InputFile.h"
 #include <boost/program_options.hpp>
 #include "Define.h"
 
@@ -23,6 +23,7 @@ namespace rvld
     class Symbol;
     class OutputEHdr;
     class OutputSHdr;
+    class OutputPHdr;
 
     class Linker
     {
@@ -34,7 +35,7 @@ namespace rvld
         ObjectFile* NewObjectFile(InputFile* localFile);
 
         Context* NewContext();
-        Context* GetContext();
+        Context* GetContext() const;
         void SetDefaultContext(Context* ctx);
 
         bool FillUpObjects(Context* ctx, std::vector<InputFile*> files);
@@ -91,8 +92,6 @@ namespace rvld
 
         void AppendChunks(rvld::Chunk* c);
         std::vector<rvld::Chunk*> GetChunks();
-        void CollectOutputSections();
-        void ComputeSectionSizes();
 
         // Initialize
         size_t FillUpObjects(std::vector<InputFile*> files);
@@ -103,6 +102,10 @@ namespace rvld
         void CreateSyntheticSections();
         void ComputeSectionHeaders();
         void ClearUnusedObjectsAndSymbols();
+        void SortOutputSections();
+        void ComputeMergedSectionSize();
+        void CollectOutputSections();
+        void ComputeSectionSizes();
 
         // Symbol
         bool ExistSymbol(const std::string& name);
@@ -114,6 +117,7 @@ namespace rvld
         rvld::OutputSection* GetOutputSection(std::string name, uint64_t type, uint64_t flags);
         uint64_t SetOutputSectionsOffset();
         Bytes* AssembleFileContent(size_t filesize);
+        std::vector<rvld::OutputSection*> OutputSections();
 
         // Debug
         void PrintArgs(int argc, char** argv);
@@ -121,6 +125,9 @@ namespace rvld
         void PrintMergedSections();
 
         Bytes* BufferRef();
+
+        rvld::OutputSHdr* SectionHeaderTable();
+        rvld::OutputPHdr* ProgramHeaderTable();
 
     private:
         rvld::MergedSection* _GetMergedSectionInstance(std::string name , uint32_t type, uint64_t flags);
@@ -135,6 +142,9 @@ namespace rvld
 
         rvld::OutputEHdr* _ehdr;
         rvld::OutputSHdr* _shdr;
+        rvld::OutputPHdr* _phdr;
+
+        uint64_t TpAddress;         // Thread Local pointer
 
         Bytes* _buffer = nullptr;
 
@@ -200,6 +210,7 @@ namespace rvld
 
     private:
         std::vector<Bytes> _data{};
+//        std::vector<std::string> _strs{};
         std::vector<uint64_t> _offsets{};
         std::vector<SectionFragment*> _fragments{};
 
@@ -224,7 +235,7 @@ namespace rvld
         SectionFragment* _sectionFragment = nullptr;
         std::string _name{};
         uint64_t _value;
-        int32_t _symIdx;
+        int32_t _symIdx = -1;
     };
 
     class ElfFile
@@ -290,7 +301,6 @@ namespace rvld
         void AppendSymbol(Symbol* sym);
         void RegisterSectionPieces();
         uint32_t GetShnIndex(ELF::Elf64_Sym elf64Sym, size_t index);
-        void SetGlobalSymbolIndex(int64_t idx);
 
     private:
         void _InitializeInputSections();
@@ -313,7 +323,8 @@ namespace rvld
     public:
         MergedSection(std::string name, uint64_t flags, uint32_t type);
         SectionFragment* Insert(const Bytes& key, uint32_t p2align);
-        //        void CopyBuf(Bytes& buffer) override;
+        void AssignOffsets();
+        void CopyBuf(Context& ctx) override;
     private:
         std::map<Bytes, SectionFragment*> _sectionFragments{};
     };
@@ -335,6 +346,19 @@ namespace rvld
         ChunkKind GetKind() override;
         void UpdateShdr(Context& ctx) override;
         void CopyBuf(Context& ctx) override;
+    };
+
+    class OutputPHdr : public Chunk
+    {
+    public:
+        OutputPHdr();
+
+        ChunkKind GetKind() override;
+        void UpdateShdr(Context& ctx) override;
+        void CopyBuf(Context& ctx) override;
+    private:
+        std::vector<ELF::Elf64_Phdr> _programHeaders{};
+        std::vector<ELF::Elf64_Phdr> _CreateProgramHeaderTable(Context& ctx);
     };
 
     class OutputSection : public Chunk

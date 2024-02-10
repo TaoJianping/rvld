@@ -53,34 +53,6 @@ std::pair<rvld::SectionFragment*, uint64_t> rvld::MergeableSection::GetSectionFr
     return std::make_pair(fragment, offset - offsets.at(index));
 }
 
-rvld::MergedSection::MergedSection(std::string name, uint64_t flags, uint32_t type)
-{
-    Name = std::move(name);
-    Shdr.sh_flags = flags;
-    Shdr.sh_type = type;
-}
 
-rvld::SectionFragment* rvld::MergedSection::Insert(const Bytes& key, uint32_t p2align)
-{
-    if (_sectionFragments.count(key))
-    {
-        auto sf = _sectionFragments.at(key);
-        if (sf->P2Align < p2align)
-        {
-            sf->P2Align = p2align;
-        }
-        return sf;
-    }
-
-    auto sf = new SectionFragment{};
-    sf->OutputSection = this;
-
-    if (sf->P2Align < p2align)
-    {
-        sf->P2Align = p2align;
-    }
-
-    return sf;
-}
 
 

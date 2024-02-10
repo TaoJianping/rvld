@@ -12,11 +12,12 @@ add_executable(rvld "")
 set_target_properties(rvld PROPERTIES OUTPUT_NAME "rvld")
 set_target_properties(rvld PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/linux/x86_64/debug")
 target_include_directories(rvld PRIVATE
-    /home/tao/.xmake/packages/b/boost/1.81.0/f03df4012c1a40359a765b7f798be77d/include
+    src/utils
+)
+target_include_directories(rvld SYSTEM PRIVATE
+    /home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include
     /home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include
-    /home/tao/.xmake/packages/z/zlib/v1.2.13/6c2566e3272548ea9aa218b4a6537908/include
-    /home/tao/.xmake/packages/m/microsoft-gsl/v4.0.0/b588884cb8064346b12df545cbf8e0e7/include
-    /home/tao/.xmake/packages/s/spdlog/v1.11.0/fd19fb415d3a492d881bd3d3e093b901/include
+    /home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include
 )
 target_compile_definitions(rvld PRIVATE
     PROJECT_DIR="/home/tao/projects/rvld"
@@ -25,6 +26,8 @@ target_compile_options(rvld PRIVATE
     $<$<COMPILE_LANGUAGE:C>:-m64>
     $<$<COMPILE_LANGUAGE:CXX>:-m64>
 )
+set_target_properties(rvld PROPERTIES CXX_EXTENSIONS OFF)
+target_compile_features(rvld PRIVATE cxx_std_23)
 if(MSVC)
     target_compile_options(rvld PRIVATE $<$<CONFIG:Debug>:-Od>)
 else()
@@ -49,110 +52,94 @@ target_link_libraries(rvld PRIVATE
     dl
 )
 target_link_directories(rvld PRIVATE
-    /home/tao/.xmake/packages/b/boost/1.81.0/f03df4012c1a40359a765b7f798be77d/lib
+    /home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/lib
     /home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/lib
-    /home/tao/.xmake/packages/z/zlib/v1.2.13/6c2566e3272548ea9aa218b4a6537908/lib
 )
 target_link_options(rvld PRIVATE
     -m64
 )
 target_sources(rvld PRIVATE
-    src/InputSection.cpp
-    src/Section.cpp
-    src/OutputSHdr.cpp
-    src/OutputSection.cpp
-    src/OutputEhdr.cpp
-    src/Context.cpp
-    src/Chunk.cpp
+    src/MergedSection.cpp
     src/main.cpp
-    src/ELFFile.cpp
+    src/OutputEhdr.cpp
+    src/InputSection.cpp
     src/Linker.cpp
+    src/OutputSHdr.cpp
+    src/MergeableSection.cpp
+    src/OutputPhdr.cpp
+    src/Context.cpp
+    src/OutputSection.cpp
+    src/Chunk.cpp
+    src/ELFFile.cpp
     src/Symbol.cpp
-    src/Utils/BytesReader.cpp
-    src/Utils/Bytes.cpp
-    src/Utils/InputFile.cpp
-    src/Utils/Archive.cpp
-    src/Utils/OutputFile.cpp
+    src/utils/file/BytesReader.cpp
+    src/utils/file/Bytes.cpp
+    src/utils/file/InputFile.cpp
+    src/utils/file/Archive.cpp
+    src/utils/file/OutputFile.cpp
 )
 
 # target
-add_executable(test_main "")
-set_target_properties(test_main PROPERTIES OUTPUT_NAME "test_main")
-set_target_properties(test_main PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/linux/x86_64/debug")
-target_include_directories(test_main PRIVATE
-    src
+add_executable(test "")
+set_target_properties(test PROPERTIES OUTPUT_NAME "test")
+set_target_properties(test PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/linux/x86_64/debug")
+target_include_directories(test PRIVATE
+    src/utils
 )
-target_include_directories(test_main PRIVATE
-    /home/tao/.xmake/packages/g/gtest/1.12.1/77b9096bc4b34d9282f672d36b015ba9/include
-    /home/tao/.xmake/packages/b/boost/1.81.0/f03df4012c1a40359a765b7f798be77d/include
+target_include_directories(test SYSTEM PRIVATE
+    /home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/include
     /home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/include
-    /home/tao/.xmake/packages/z/zlib/v1.2.13/6c2566e3272548ea9aa218b4a6537908/include
-    /home/tao/.xmake/packages/m/microsoft-gsl/v4.0.0/b588884cb8064346b12df545cbf8e0e7/include
-    /home/tao/.xmake/packages/s/spdlog/v1.11.0/fd19fb415d3a492d881bd3d3e093b901/include
+    /home/tao/.xmake/packages/s/spdlog/v1.12.0/e24126f106564f7c97234caa2b9c81c5/include
+    /home/tao/.xmake/packages/g/gtest/v1.14.0/1396d24d20ce4a17a0d869a0dd56d9ba/include
 )
-target_compile_definitions(test_main PRIVATE
+target_compile_definitions(test PRIVATE
     PROJECT_DIR="/home/tao/projects/rvld"
 )
-target_compile_options(test_main PRIVATE
+target_compile_options(test PRIVATE
     $<$<COMPILE_LANGUAGE:C>:-m64>
     $<$<COMPILE_LANGUAGE:CXX>:-m64>
 )
+set_target_properties(test PROPERTIES CXX_EXTENSIONS OFF)
+target_compile_features(test PRIVATE cxx_std_23)
 if(MSVC)
-    target_compile_options(test_main PRIVATE $<$<CONFIG:Debug>:-Od>)
+    target_compile_options(test PRIVATE $<$<CONFIG:Debug>:-Od>)
 else()
-    target_compile_options(test_main PRIVATE -O0)
+    target_compile_options(test PRIVATE -O0)
 endif()
 if(MSVC)
-    target_compile_options(test_main PRIVATE -Zi)
+    target_compile_options(test PRIVATE -Zi)
 else()
-    target_compile_options(test_main PRIVATE -g)
+    target_compile_options(test PRIVATE -g)
 endif()
 if(MSVC)
-    set_property(TARGET test_main PROPERTY
+    set_property(TARGET test PROPERTY
         MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
-target_link_libraries(test_main PRIVATE
-    gtest
-    gtest_main
-    gmock
+target_link_libraries(test PRIVATE
     boost_atomic-mt
     boost_program_options-mt
     boost_filesystem-mt
     bz2
     z
+    gtest
+    gmock
     pthread
     dl
 )
-target_link_directories(test_main PRIVATE
-    /home/tao/.xmake/packages/g/gtest/1.12.1/77b9096bc4b34d9282f672d36b015ba9/lib
-    /home/tao/.xmake/packages/b/boost/1.81.0/f03df4012c1a40359a765b7f798be77d/lib
+target_link_directories(test PRIVATE
+    /home/tao/.xmake/packages/b/boost/1.84.0/5a6a018d36ab4898a6d55941f29e9692/lib
     /home/tao/.xmake/packages/b/bzip2/1.0.8/8db6bd46210f4711a452b7767b44748c/lib
-    /home/tao/.xmake/packages/z/zlib/v1.2.13/6c2566e3272548ea9aa218b4a6537908/lib
+    /home/tao/.xmake/packages/g/gtest/v1.14.0/1396d24d20ce4a17a0d869a0dd56d9ba/lib
 )
-target_link_options(test_main PRIVATE
+target_link_options(test PRIVATE
     -m64
 )
-target_sources(test_main PRIVATE
-    src/InputSection.cpp
-    src/Section.cpp
-    src/OutputSHdr.cpp
-    src/OutputSection.cpp
-    src/OutputEhdr.cpp
-    src/Context.cpp
-    src/Chunk.cpp
-    src/ELFFile.cpp
-    src/Linker.cpp
-    src/Symbol.cpp
-    src/Utils/BytesReader.cpp
-    src/Utils/Bytes.cpp
-    src/Utils/InputFile.cpp
-    src/Utils/Archive.cpp
-    src/Utils/OutputFile.cpp
-    tests/TestOutputFile.cpp
-    tests/TestUtils.cpp
-    tests/TestMain.cpp
-    tests/TestObjectFile.cpp
-    tests/TestLinker.cpp
-    tests/TestInputFile.cpp
+target_sources(test PRIVATE
+    src/utils/file/BytesReader.cpp
+    src/utils/file/Bytes.cpp
+    src/utils/file/InputFile.cpp
+    src/utils/file/Archive.cpp
+    src/utils/file/OutputFile.cpp
+    tests/TestFile.cpp
 )
 

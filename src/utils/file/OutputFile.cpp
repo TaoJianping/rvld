@@ -4,7 +4,9 @@
 
 #include "OutputFile.h"
 
+#include <fstream>
 #include <utility>
+#include <spdlog/spdlog.h>
 
 namespace fs = std::filesystem;
 
