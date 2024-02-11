@@ -16,7 +16,7 @@ Bytes::Bytes(const std::vector<char> &contents)
     }
 }
 
-Bytes::Bytes(BytesView bytesView)
+Bytes::Bytes(const BytesView& bytesView)
 {
     for (auto & c: bytesView)
     {
@@ -24,7 +24,7 @@ Bytes::Bytes(BytesView bytesView)
     }
 }
 
-Bytes Bytes::SubBytes(size_t start, size_t end)
+Bytes Bytes::SubBytes(const size_t start, const size_t end)
 {
     auto beginIndex = this->begin() + start;
     auto endIndex = this->begin() + end;
@@ -59,7 +59,7 @@ std::string Bytes::ToString()
 
 void Bytes::Write(size_t pos, const Bytes& bytes)
 {
-    for (auto byte : bytes)
+    for (const auto& byte : bytes)
     {
         assert(pos < size());
         this->at(pos) = byte;
@@ -67,13 +67,13 @@ void Bytes::Write(size_t pos, const Bytes& bytes)
     }
 }
 
-void Bytes::ReSize(size_t size)
+void Bytes::ReSize(const size_t size)
 {
     assert(size <= max_size());
     this->resize(size, std::byte{'\0'});
 }
 
-char* Bytes::Chars()
+auto Bytes::Chars() -> const char*
 {
     return reinterpret_cast<char*>(data()); ;
 }

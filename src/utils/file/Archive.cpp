@@ -13,10 +13,10 @@ std::vector<InputFile*> Archive::ReadArchiveMembers()
 {
     fs::path absolutePath = fs::absolute(_localFile->GetPath());
     std::vector<InputFile*> ret{};
-    auto content = _localFile->GetContents();
+    const auto content = _localFile->GetContentView();
     auto reader = BytesReader(content);
 
-    auto magicLen = std::strlen(ARCHIVE_MAGIC);
+    const auto magicLen = std::strlen(ARCHIVE_MAGIC);
     reader.Forward(magicLen);
 
     auto count = 0;
@@ -45,12 +45,12 @@ std::vector<InputFile*> Archive::ReadArchiveMembers()
 
         if (ah.IsSymTab())
         {
-//            spdlog::info("Find Symbol Table");
+            spdlog::info("Find Symbol Table");
         }
 
         if (ah.IsStrTab())
         {
-//            spdlog::info("Find String Table");
+            spdlog::info("Find String Table");
             stringTable.insert(stringTable.begin(), contentBytes.begin(), contentBytes.end());
         }
 

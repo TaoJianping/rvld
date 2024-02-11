@@ -12,17 +12,24 @@
 class BytesReader
 {
 public:
-    explicit BytesReader(Bytes &bytes);
+    explicit BytesReader(Bytes& bytes);
+    explicit BytesReader(const BytesView& bytes);
+
     void Forward(size_t n = 1);
     void Backward(size_t n = 1);
+
+    [[nodiscard]] size_t GetPos() const;
+
+    [[nodiscard]] std::byte Peek() const;
+    [[nodiscard]] BytesView PeekRange(size_t num) const;
+
     Bytes ReadSection(size_t start, size_t size);
     Bytes ReadSection(size_t size);
-    size_t GetPos();
 
     template<typename T>
     T ReadStruct() {
         auto s = T{};
-        auto len = sizeof(T{});
+        const auto len = sizeof(T{});
         std::memcpy(&s, _content.data() + GetPos(), len);
         Forward(len);
         return s;

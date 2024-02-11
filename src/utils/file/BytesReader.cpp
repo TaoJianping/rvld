@@ -9,20 +9,36 @@ BytesReader::BytesReader(Bytes& bytes):
 
 }
 
-void BytesReader::Forward(size_t n)
+BytesReader::BytesReader(const BytesView& bytes): _content(bytes)
+{
+
+}
+
+void BytesReader::Forward(const size_t n)
 {
     _pos += n;
 }
 
-void BytesReader::Backward(size_t n)
+void BytesReader::Backward(const size_t n)
 {
     _pos -= n;
 }
 
-size_t BytesReader::GetPos()
+std::byte BytesReader::Peek() const
+{
+    return _content[GetPos()];
+}
+
+BytesView BytesReader::PeekRange(const size_t num) const
+{
+    return BytesView{_content.data() + GetPos(), num};
+}
+
+size_t BytesReader::GetPos() const
 {
     return _pos;
 }
+
 Bytes BytesReader::ReadSection(size_t start, size_t size)
 {
 //    Bytes bytes {_content.data() + start, size};

@@ -141,5 +141,6 @@ target_sources(test PRIVATE
     src/utils/file/Archive.cpp
     src/utils/file/OutputFile.cpp
     tests/TestFile.cpp
+    tests/TestMain.cpp
 )
 

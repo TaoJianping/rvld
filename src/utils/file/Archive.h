@@ -30,7 +30,7 @@ struct ArHdr
     char size[10];
     char end[2];
 
-    bool IsValid()
+    [[nodiscard]] bool IsValid() const
     {
         return end[0] == 0x60 && end[1] == 0x0a;
     };

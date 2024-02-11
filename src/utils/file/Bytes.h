@@ -18,20 +18,20 @@ class Bytes : public std::vector<std::byte>
 public:
     Bytes() = default;
     explicit Bytes(const std::vector<char>& contents);
-    explicit Bytes(BytesView bytesView);
+    explicit Bytes(const BytesView& bytesView);
 
     auto SubBytes(size_t start, size_t end) -> Bytes;
     auto SubBytes(size_t start) -> Bytes;
 
     void ReSize(size_t size);
 
-    auto Chars() -> char*;
+    auto Chars() -> const char*;
     auto ToString() -> std::string;
 
     template<typename T>
-    void Write(size_t pos, T data) {
-        auto size = sizeof(T);
-        auto ptr = reinterpret_cast<char*>(&data);
+    void Write(const size_t pos, T data) {
+        const auto size = sizeof(T);
+        const auto ptr = reinterpret_cast<char*>(&data);
         for (size_t i = 0; i < size; ++i)
         {
             this->at(pos + i) = static_cast<std::byte>(ptr[i]);
@@ -40,8 +40,8 @@ public:
 
     template<typename T>
     void Write(T data) {
-        auto size = sizeof(T);
-        auto ptr = reinterpret_cast<char*>(&data);
+        const auto size = sizeof(T);
+        const auto ptr = reinterpret_cast<char*>(&data);
         for (size_t i = 0; i < size; ++i)
         {
             push_back(static_cast<std::byte>(ptr[i]));
@@ -51,7 +51,7 @@ public:
     template<typename T>
     void WriteVector(size_t pos, std::vector<T> data) {
         auto size = sizeof(T);
-        auto ptr = reinterpret_cast<char*>(data.data());
+        const auto ptr = reinterpret_cast<char*>(data.data());
         for (size_t i = 0; i < size * data.size(); ++i)
         {
             this->at(pos + i) = static_cast<std::byte>(ptr[i]);
@@ -61,7 +61,7 @@ public:
     void Write(size_t pos, const Bytes& bytes);
 
     template<typename T>
-    T ReadStruct(std::size_t start)
+    T ReadStruct(const std::size_t start)
     {
         auto s = T{};
         std::memcpy(&s, data() + start, sizeof(T{}));
